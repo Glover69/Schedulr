@@ -1,1 +1,45 @@
 /* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+html,
+body {
+  max-width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+/* SF */
+
+@font-face {
+  font-family: 'SF-Regular';
+  src: url('/fonts/SF/SFPRODISPLAYREGULAR.OTF');
+}
+
+@font-face {
+  font-family: 'SF-Medium';
+  src: url('/fonts/SF/SFPRODISPLAYMEDIUM.OTF');
+}
+
+@font-face {
+  font-family: 'SF-Bold';
+  src: url('/fonts/SF/SFPRODISPLAYBOLD.OTF');
+}
+
+
+.SF-Regular{
+  font-family: 'SF-Regular';
+}
+
+.SF-Medium{
+  font-family: 'SF-Medium';
+}
+
+.SF-Bold{
+  font-family: 'SF-Bold';
+}
+
+
+@theme {
+  --color-text-main: #33373D;
+}
