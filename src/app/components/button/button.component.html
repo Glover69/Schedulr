@@ -1,0 +1,24 @@
+<button class="w-full disabled:opacity-35 disabled:cursor-not-allowed"
+        [ngClass]="{
+        'bg-primary': variant === 'primary',
+        'bg-secondary': variant === 'secondary',
+        'px-4 xl:px-6 xl:py-3 py-2 flex items-center gap-2 justify-center rounded-lg': true
+      }"
+        [disabled]="disabled || externalLoading"
+        (click)="handleClick()"
+        [type]="type"
+>
+  @if (externalLoading) {
+    <ng-lottie [options]="lottieConfig" width="20px"> </ng-lottie>
+  }@else if(hasIcon){
+    <img class="w-4 lg:w-6 xl:w-8" [src]="iconPath" alt="">
+  }
+  <span
+    [ngClass]="{
+          'text-secondary': variant === 'primary',
+          'text-primary': variant === 'secondary',
+        }"
+    class="SF-Bold text-sm lg:text-base xl:text-xl"
+  >{{ label }}</span
+  >
+</button>

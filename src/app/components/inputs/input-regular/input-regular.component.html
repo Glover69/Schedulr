@@ -1,0 +1,15 @@
+<div class="input-group flex flex-col items-start w-full">
+  @if (isLabel) {
+    <span class="text-sm G-Light text-main-black tracking-tight">{{ label }}</span>
+  }
+
+  <input
+    [attr.minlength]="minLength"
+    class="focus:outline-none rounded-lg border border-gray-200 bg-white py-2 px-3 w-full placeholder:text-[#A1A1AA] placeholder:text-sm G-Light"
+    [placeholder]="placeholder"
+    [type]="type"
+    [value]="value"
+    (input)="onInput($event)"
+    (blur)="onTouched()"
+  />
+</div>

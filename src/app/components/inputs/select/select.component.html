@@ -1,0 +1,14 @@
+<div class="input-group flex flex-col items-start w-full">
+  @if (label) {
+    <span class="text-sm G-Light text-main-black tracking-tight">{{ label }}</span>
+  }
+  <select [value]="value" (change)="onChange($event)" (blur)="onTouched()" [disabled]="disabled" class="w-full rounded-lg text-sm G-Light py-2 px-3 border border-gray-200" name="" id="">
+
+    @if (placeholder) {
+      <option class="text-regular-txt" [value]="null" disabled selected>{{ placeholder }}</option>
+    }
+    @for (option of options; track $index) {
+      <option [value]="option">{{option}}</option>
+    }
+  </select>
+</div>

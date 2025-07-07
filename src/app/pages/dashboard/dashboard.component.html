@@ -1,0 +1,76 @@
+<div class="flex flex-col items-start gap-8 xl:gap-16">
+
+
+@if (schedules.length == 0) {
+    <div class="header flex flex-col items-start">
+      <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Dashboard</span>
+      <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">Your schedules</span>
+    </div>
+
+
+    <div class="content-for-empty-dashboard w-full flex flex-col items-center justify-center">
+      <img ngSrc="/images/empty-dashboard.png" alt="Empty Dashboard" class="w-full md:w-3/4 lg:w-1/2" height="1096" width="1096">
+      <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight mt-4">No Schedules Available</span>
+      <span class="text-text-main text-sm lg:text-base xl:text-2xl opacity-60 SF-Medium tracking-tight">Your completed schedules will appear here when done!</span>
+      <app-button label="Create a class schedule" variant="secondary" [hasIcon]="true" iconPath="icons/add.svg" class="mt-4 xl:text-xl"></app-button>
+    </div>
+
+}@else{
+
+  <div class="flex flex-col lg:flex-row items-center justify-between gap-0 px-5 md:px-7 xl:px-16 xl:py-7  py-4 md:py-5 bg-secondary w-full rounded-xl xl:mt-8">
+    <div class="left flex flex-col items-start xl:gap-2">
+      <span class="text-text-main text-xl lg:text-2xl xl:text-4xl SF-Bold tracking-tight">Create new schedule.</span>
+      <span class="text-text-main text-sm md:w-3/5 md:text-base xl:text-2xl opacity-60 SF-Medium tracking-tight">Set up your semester schedule with classes, times, and export to your preferred calendar!</span>
+      <app-button label="Create a class schedule" variant="primary" [hasIcon]="true" iconPath="icons/add-secondary.svg" class="mt-4 xl:text-xl"></app-button>
+    </div>
+
+    <img ngSrc="/images/create-schedule.png" alt="Create Schedule" class="lg:w-1/4 hidden lg:flex" height="1096" width="1096">
+  </div>
+
+  <div class="header flex flex-col items-start">
+    <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Dashboard</span>
+    <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">Your schedules</span>
+  </div>
+
+
+  <div class="flex w-full flex-col gap-8 md:grid md:grid-cols-2 lg:grid-cols-3">
+    @for (schedule of schedules; track $index) {
+      <div class="schedule-card flex flex-col items-start gap-3">
+        <div class="top-side w-full rounded-xl border-2 border-secondary p-0.5">
+          <div class="inner-container w-full h-full rounded-lg border-[1.54px] border-primary overflow-hidden">
+            <div class="h-32 bg-secondary w-full"></div>
+            <div class="flex flex-col items-start gap-2 h-full p-4">
+              <span class="text-primary text-base md:text-base lg:text-lg xl:text-xl SF-Bold tracking-tight">{{schedule.classes.length}} classes</span>
+              <div class="flex items-center gap-1">
+                @for (chip of schedule.classes.slice(0,2); track $index) {
+                  <span [style.color]="chip.color" [style.background-color]="chip.color + '20'" class='text-xs xl:text-sm SF-Medium tracking-tight px-3 py-1 rounded-full'>
+                  {{chip.course_name}}
+                  </span>
+                }
+
+                @if (schedule.classes.length - 2 !== 0) {
+                  <span class='text-xs xl:text-sm text-[#B42318] bg-[#FEF3F2] SF-Medium tracking-tight p-1 px-2 rounded-full'>
+                  +{{schedule.classes.length - 2}}
+                  </span>
+                }
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="bottom-side flex flex-col items-start">
+          <span class="text-text-main text-xl lg:text-2xl SF-Bold tracking-tight">{{schedule.semester.schedule_name}}</span>
+          <span class="text-text-main text-sm md:text-base flex lg:text-xl opacity-60 SF-Medium tracking-tight">
+            <img ngSrc="/icons/calendar-check.svg" alt="Calendar Check Icon" class="inline-block mr-2 w-4 md:w-6" height="18" width="18">
+            {{schedule.semester.start_date | date:'MMM dd, yyyy'}} - {{schedule.semester.end_date | date:'MMM dd, yyyy'}}
+          </span>
+        </div>
+      </div>
+    }
+  </div>
+
+
+}
+
+</div>

@@ -1,0 +1,31 @@
+<div class="file-drop border border-dashed border-[#E0E2E7] cursor-pointer gap-2 rounded-lg bg-[#F9F9FC] flex flex-col items-center justify-center px-4 py-5" [class.dragover]="dragOver" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
+  <input type="file" [attr.accept]="accept" [attr.multiple]="multiple ? '' : null" (change)="onFileChange($event)" #fileInput hidden/>
+
+  @if (files.length === 0) {
+    <div class="flex flex-col items-center justify-center gap-2">
+      <div class="icon w-12 h-12 bg-primary-purple rounded-lg flex items-center justify-center">
+        <img ngSrc="/icons/picture.svg" alt="" srcset="" height="18" width="18">
+
+      </div>
+
+      <span class="text-custom-gray G-Light tracking-tight">Drag and drop image here, or click add image</span>
+    </div>
+  }@else {
+    <div class="multiple-previews flex flex-wrap gap-3">
+      @for (preview of imagePreviews; track $index) {
+        <div class="icon relative group w-28 h-28 rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
+          <img class="object-cover w-full h-full" [ngSrc]="preview" alt="" srcset="" fill>
+          <button
+            type="button"
+            (click)="removeFile($index); $event.stopPropagation()"
+            class="absolute top-1 z-[1000] right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+            aria-label="Remove image"
+          >&times;</button>
+        </div>
+      }
+
+    </div>
+  }
+
+  <app-button (click)="fileInput.click(); $event.stopPropagation()" label="Add Image" variant="secondary"></app-button>
+</div>
