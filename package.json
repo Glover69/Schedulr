@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --host=0.0.0.0 --port=4200",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -20,6 +20,9 @@
     "@angular/router": "^19.1.0",
     "@angular/service-worker": "^19.1.0",
     "@tailwindcss/postcss": "^4.1.11",
+    "ics": "^3.8.1",
+    "lottie-web": "^5.13.0",
+    "ngx-lottie": "^20.0.0",
     "postcss": "^8.5.6",
     "rxjs": "~7.8.0",
     "tailwindcss": "^4.1.11",

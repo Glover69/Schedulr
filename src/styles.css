@@ -42,4 +42,6 @@ body {
 
 @theme {
   --color-text-main: #33373D;
+  --color-primary: #91059F;
+  --color-secondary: #FDE6FF;
 }
