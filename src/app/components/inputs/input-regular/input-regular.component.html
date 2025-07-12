@@ -1,15 +1,17 @@
-<div class="input-group flex flex-col items-start w-full">
+<div class="input-group flex flex-col gap-1 items-start w-full">
   @if (isLabel) {
-    <span class="text-sm G-Light text-main-black tracking-tight">{{ label }}</span>
+    <span class="text-sm SF-Medium lg:text-base xl:text-lg text-text-main tracking-tight">{{ label }}</span>
   }
 
   <input
     [attr.minlength]="minLength"
-    class="focus:outline-none rounded-lg border border-gray-200 bg-white py-2 px-3 w-full placeholder:text-[#A1A1AA] placeholder:text-sm G-Light"
+    class="focus:outline-none text-text-main rounded-lg border border-input-border bg-white py-2 px-3 lg:py-3 lg:px-4 w-full placeholder:text-[#94A3B8] placeholder:text-sm lg:placeholder:text-base SF-Regular"
     [placeholder]="placeholder"
     [type]="type"
     [value]="value"
+    [required]="required"
     (input)="onInput($event)"
     (blur)="onTouched()"
+    [disabled]="disabled"
   />
 </div>

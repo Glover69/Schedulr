@@ -1,10 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { LottieComponent } from 'ngx-lottie';
 import {CommonModule, NgClass} from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-button',
-  imports: [LottieComponent, CommonModule, NgClass],
+  imports: [LottieComponent, CommonModule, NgClass, RouterModule],
   templateUrl: './button.component.html',
   styleUrl: './button.component.css'
 })
@@ -18,7 +19,8 @@ export class ButtonComponent {
   @Input() label: string = 'Label';
   @Input() type: string = 'submit';
   @Input() clickFunction?: () => Promise<any> | void;
-
+  @Input() routerLink?: string | any[]; 
+  
   // External loading flag for use with (ngSubmit)
   @Input() externalLoading: boolean = false;
 

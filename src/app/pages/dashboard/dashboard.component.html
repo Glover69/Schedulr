@@ -2,26 +2,30 @@
 
 
 @if (schedules.length == 0) {
-    <div class="header flex flex-col items-start">
+  <!-- View for when dashboard is empty -->
+    <div class="header flex flex-col items-start lg:px-20 xl:px-36 2xl:px-72">
       <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Dashboard</span>
       <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">Your schedules</span>
     </div>
 
 
     <div class="content-for-empty-dashboard w-full flex flex-col items-center justify-center">
-      <img ngSrc="/images/empty-dashboard.png" alt="Empty Dashboard" class="w-full md:w-3/4 lg:w-1/2" height="1096" width="1096">
+      <img ngSrc="/images/empty-dashboard.png" alt="Empty Dashboard" class="w-full md:w-3/4 lg:w-1/2 xl:w-1/4" height="1096" width="1096">
       <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight mt-4">No Schedules Available</span>
       <span class="text-text-main text-sm lg:text-base xl:text-2xl opacity-60 SF-Medium tracking-tight">Your completed schedules will appear here when done!</span>
-      <app-button label="Create a class schedule" variant="secondary" [hasIcon]="true" iconPath="icons/add.svg" class="mt-4 xl:text-xl"></app-button>
+      <app-button [routerLink]="'/add-schedule'" label="Create a class schedule" variant="secondary" [hasIcon]="true" iconPath="icons/add.svg" class="mt-4 xl:text-xl"></app-button>
     </div>
 
 }@else{
 
+  <!-- View for when dashboard has content -->
+
+  <!-- Banner for creating schedules -->
   <div class="flex flex-col lg:flex-row items-center justify-between gap-0 px-5 md:px-7 xl:px-16 xl:py-7  py-4 md:py-5 bg-secondary w-full rounded-xl xl:mt-8">
     <div class="left flex flex-col items-start xl:gap-2">
       <span class="text-text-main text-xl lg:text-2xl xl:text-4xl SF-Bold tracking-tight">Create new schedule.</span>
       <span class="text-text-main text-sm md:w-3/5 md:text-base xl:text-2xl opacity-60 SF-Medium tracking-tight">Set up your semester schedule with classes, times, and export to your preferred calendar!</span>
-      <app-button label="Create a class schedule" variant="primary" [hasIcon]="true" iconPath="icons/add-secondary.svg" class="mt-4 xl:text-xl"></app-button>
+      <app-button [routerLink]="'/add-schedule'" label="Create a class schedule" variant="primary" [hasIcon]="true" iconPath="icons/add-secondary.svg" class="mt-4 xl:text-xl"></app-button>
     </div>
 
     <img ngSrc="/images/create-schedule.png" alt="Create Schedule" class="lg:w-1/4 hidden lg:flex" height="1096" width="1096">
@@ -33,6 +37,7 @@
   </div>
 
 
+  <!-- Grid container that holds schedule cards -->
   <div class="flex w-full flex-col gap-8 md:grid md:grid-cols-2 lg:grid-cols-3">
     @for (schedule of schedules; track $index) {
       <div class="schedule-card flex flex-col items-start gap-3">

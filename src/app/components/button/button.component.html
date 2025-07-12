@@ -1,4 +1,4 @@
-<button class="w-full disabled:opacity-35 disabled:cursor-not-allowed"
+<button [routerLink]="routerLink || null" class="w-full disabled:opacity-35 cursor-pointer disabled:cursor-not-allowed"
         [ngClass]="{
         'bg-primary': variant === 'primary',
         'bg-secondary': variant === 'secondary',

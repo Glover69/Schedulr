@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import {Component, forwardRef, Input} from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 
 
@@ -7,7 +7,14 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@a
   selector: 'app-input-regular',
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './input-regular.component.html',
-  styleUrl: './input-regular.component.css'
+  styleUrl: './input-regular.component.css',
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => InputRegularComponent),
+      multi: true,
+    },
+  ],
 })
 export class InputRegularComponent {
   @Input() label: string = 'Label';
@@ -16,8 +23,12 @@ export class InputRegularComponent {
   @Input() minLength?: number;
   @Input() isLabel: boolean = true;
   @Input() inputType: string = 'text';
+  @Input() required: boolean = false;
 
   value: string = '';
+  disabled: boolean = false;
+
+
 
   constructor() {}
 
@@ -28,6 +39,7 @@ export class InputRegularComponent {
     const input = event.target as HTMLInputElement;
     this.value = input.value;
     this.onChange(this.value);
+    this.onTouched();
   }
 
   writeValue(value: any): void {
@@ -40,5 +52,9 @@ export class InputRegularComponent {
 
   registerOnTouched(item: any): void {
     this.onTouched = item;
+  }
+
+  setDisabledState?(isDisabled: boolean): void {
+    this.disabled = isDisabled;
   }
 }

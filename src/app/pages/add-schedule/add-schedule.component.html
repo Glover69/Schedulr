@@ -1,0 +1,231 @@
+<div class="flex flex-col items-start gap-8 xl:gap-12 lg:px-20 xl:px-36 2xl:px-72 pt-8">
+
+
+  @switch (currentStep){
+    @case ('SemInfo'){
+      <div class="header flex flex-col items-start">
+        <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Set up your semester.</span>
+        <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">Start by defining your semester dates and schedule name.</span>
+      </div>
+
+      <div class="flex w-full flex-col items-start gap-6">
+        <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Semester Information</span>
+
+
+        <form [formGroup]="form" (ngSubmit)="onSubmitFirstStep()" class="w-full flex flex-col gap-6">
+          <div formGroupName="semester" class="flex flex-col gap-4 w-full">
+            <app-input-regular
+              label="Semester Name"
+              placeholder="eg. Fall 2025 Semester"
+              formControlName="schedule_name"
+              [required]="true"
+            ></app-input-regular>
+
+            <div class="grid grid-cols-2 gap-5">
+              <app-input-regular
+                label="Start Date"
+                type="date"
+                formControlName="start_date"
+                [required]="true"
+              ></app-input-regular>
+
+              <app-input-regular
+                label="End Date"
+                type="date"
+                formControlName="end_date"
+                [required]="true"
+              ></app-input-regular>
+            </div>
+
+          </div>
+
+          <app-button type="submit" [disabled]="form.get('semester')?.invalid" label="Continue to add classes" variant="secondary" class="mt-4 xl:text-xl"></app-button>
+
+        </form>
+
+
+      </div>
+    }
+    @case ('AddClasses'){
+      <div class="header flex flex-col items-start">
+        <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Add your classes.</span>
+        <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">Add schedules with their schedules, rooms and customize colors.</span>
+      </div>
+
+      <div class="flex w-full flex-col items-start gap-6">
+        <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Add New Class</span>
+
+
+        <form [formGroup]="classForm" (ngSubmit)="addClass()" class="w-full flex flex-col gap-6">
+          <div class="flex flex-col gap-4 w-full">
+            <app-input-regular
+              label="Course Title"
+              placeholder="eg. Calculus II"
+              formControlName="course_name"
+              [required]="true"
+            ></app-input-regular>
+
+
+            <div class="input-group w-full flex flex-col items-start gap-2">
+              <span class="text-sm lg:text-base SF-Medium text-text-main tracking-tight">Days of Week</span>
+
+              <div class="flex flex-wrap gap-2">
+                @for (day of daysOfWeek; track $index) {
+                  <span
+                    (click)="toggleDay(day)"
+                    [ngClass]="{
+                      'bg-secondary text-primary border-primary': isDaySelected(day),
+                      'border-input-border': !isDaySelected(day)
+                    }"
+                    class='text-xs border cursor-pointer xl:text-sm SF-Medium tracking-tight px-3 py-1 rounded-full'>
+                  {{day}}
+                  </span>
+                }
+              </div>
+
+
+              <div formArrayName="days" class="w-full flex flex-col gap-4 mt-4">
+                @for (dayGroup of days.controls; track $index) {
+                  <div [formGroupName]="$index" class="p-6 border border-input-border rounded-lg flex flex-col gap-3">
+                    <span class="text-lg tracking-tight SF-Bold text-text-main">{{dayGroup.get('day')?.value}}</span>
+                    <div class="flex w-full flex-col items-start gap-4">
+                      <div class="w-full grid grid-cols-2 gap-8">
+                        <app-input-regular
+                        label="Start Time"
+                        type="time"
+                        formControlName="start_time"
+                        [required]="true"
+                        ></app-input-regular>
+                        <app-input-regular
+                          label="End Time"
+                          type="time"
+                          formControlName="end_time"
+                          [required]="true"
+                        ></app-input-regular>
+                      </div>
+
+                      <app-input-regular
+                        label="Room"
+                        class="w-full"
+                        placeholder="eg. Room 101"
+                        formControlName="room"
+                        [required]="true"
+                      ></app-input-regular>
+                    </div>
+
+                    <!-- Consistency options (only show for days after the first) -->
+                    @if ($index > 0) {
+                      <div class="flex w-full flex-col gap-3 py-4 rounded-lg">
+                        <span class="text-sm lg:text-base SF-Bold text-primary tracking-tight">Consistency Options</span>
+                        
+                        <div class="flex flex-col gap-2">
+                          <label class="flex items-start gap-2 cursor-pointer">
+                            <input 
+                              type="checkbox" 
+                              (change)="copyTimeFromPrevious($index, $event)"
+                              class="w-4 h-4 text-primary mt-1 bg-gray-100 border-gray-300 rounded focus:ring-primary focus:ring-2"
+                            >
+                            <span class="text-sm lg:text-base SF-Medium text-text-main tracking-tight">Class time is the same as previous day</span>
+                          </label>
+                          
+                          <label class="flex items-start gap-2 cursor-pointer">
+                            <input 
+                              type="checkbox" 
+                              (change)="copyRoomFromPrevious($index, $event)"
+                              class="w-4 h-4 mt-1 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary focus:ring-2"
+                            >
+                            <span class="text-sm lg:text-base SF-Medium text-text-main tracking-tight">Room location is the same as previous day</span>
+                          </label>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+
+            </div>
+
+            <div class="flex flex-col items-start gap-2 w-full">
+                <span class="text-sm lg:text-base SF-Medium text-text-main tracking-tight">Color</span>
+
+                <div class="w-full flex flex-wrap flex-shrink-0 items-center gap-3">
+                  @for (color of colorArray; track $index) {
+                  <div (click)="toggleColor(color)" [ngClass]="{ 'ring-2 ring-offset-2 ring-gray-400': isColorSelected(color), 'hover:scale-110': true }" [style.backgroundColor]="color" class="w-10 h-10 border border-input-border rounded-full">
+
+                  </div>
+                }
+                </div>
+
+
+
+            </div>
+          </div>
+
+
+          <app-button type="submit" [disabled]="!classForm.valid" label="Add Class" variant="secondary" class="mt-4 xl:text-xl"></app-button>
+          <!-- @if (classForm.invalid && classForm.touched) {
+            <div class="text-red-500 text-sm mt-2">
+              Please fill in all required fields including at least one day with time and room information.
+            </div>
+          } -->
+        </form>
+
+
+        @if (classes.length > 0) {
+          <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Added Classes ({{classes.value.length}})</span>
+
+          <div class="flex w-full xl:grid xl:grid-cols-2 flex-col items-start gap-6">
+            @for (item of classes.value; track $index) {
+              <div [style.backgroundColor]="item.color_light" class="single-class w-full items-stretch flex  gap-4 rounded-xl p-5">
+                <div [style.backgroundColor]="item.color" class="w-4 flex-shrink-0 rounded-lg"></div>
+
+                <div class="right flex flex-col items-start gap-2 flex-1">
+                  <span class="text-text-main text-xl lg:text-2xl SF-Bold tracking-tight">{{item.course_name}}</span>
+
+                  <div class="days-group flex flex-col items-start">
+                    @for (day of item.days; track $index) {
+                      <div class="day flex items-center gap-1">
+                        <span class="text-text-main opacity-60 xl:text-xl SF-Medium tracking-tight">{{day.day}}: </span>
+                        <span class="text-text-main opacity-60 xl:text-xl SF-Regular tracking-tight">{{day.start_time}} - {{day.end_time}}</span>
+                      </div>
+                    }
+                  </div>
+
+                  <div class="room flex items-center mt-8">
+                    <span class="text-text-main lg:text-xl SF-Bold tracking-tight">
+                          Rooms: <span class="SF-Regular ml-1">{{ getRoomsForClass(item.days) }}</span>
+                    </span>
+
+
+                  </div>
+
+
+                </div>
+
+              </div>
+            }
+
+          </div>
+
+
+          <app-button type="submit" (click)="onSubmitSecondStep()" [disabled]="classes.length == 0" label="Proceed to Preview" variant="secondary" class="mt-4 xl:text-xl"></app-button>
+
+        }
+
+
+
+
+      </div>
+    }
+    @case ('PreviewSchedule'){
+      <div class="header flex flex-col items-start">
+        <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Preview your schedule.</span>
+        <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">Review your complete schedule before saving.</span>
+      </div>
+
+      <div>
+      </div>
+    }
+  }
+
+</div>
