@@ -13,7 +13,7 @@
 
 
         <form [formGroup]="form" (ngSubmit)="onSubmitFirstStep()" class="w-full flex flex-col gap-6">
-          <div formGroupName="semester" class="flex flex-col gap-4 w-full">
+          <div formGroupName="semester" class="flex flex-col gap-4">
             <app-input-regular
               label="Semester Name"
               placeholder="eg. Fall 2025 Semester"
@@ -27,6 +27,7 @@
                 type="date"
                 formControlName="start_date"
                 [required]="true"
+
               ></app-input-regular>
 
               <app-input-regular
@@ -223,7 +224,11 @@
         <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">Review your complete schedule before saving.</span>
       </div>
 
-      <div>
+      <div class="flex flex-col items-start gap-5">
+        <div class="header flex flex-col items-start">
+        <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Schedule Preview</span>
+        <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">{{getCompleteSchedulePayload().semester.schedule_name}}</span>
+      </div>
       </div>
     }
   }
