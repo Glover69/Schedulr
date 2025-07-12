@@ -22,7 +22,7 @@ import { ButtonComponent } from '../../components/button/button.component';
   styleUrl: './add-schedule.component.css',
 })
 export class AddScheduleComponent {
-  stepper = 2;
+  stepper = 0;
   stepMap = ['SemInfo', 'AddClasses', 'PreviewSchedule'];
   daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   colorArray = [

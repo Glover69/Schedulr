@@ -3,50 +3,53 @@
 
   @switch (currentStep){
     @case ('SemInfo'){
-      <div class="header flex flex-col items-start">
-        <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Set up your semester.</span>
-        <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">Start by defining your semester dates and schedule name.</span>
+  <div class="header flex flex-col items-start">
+    <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Set up your semester.</span>
+    <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">Start by defining your semester dates and schedule name.</span>
+  </div>
+
+  <div class="flex w-full flex-col items-start gap-6">
+    <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Semester Information</span>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmitFirstStep()" class="w-full flex flex-col gap-6">
+      <div formGroupName="semester" class="flex flex-col gap-4 w-full">
+        <app-input-regular
+          label="Semester Name"
+          placeholder="eg. Fall 2025 Semester"
+          formControlName="schedule_name"
+          [required]="true"
+          class="w-full"
+        ></app-input-regular>
+
+        <div class="w-full flex flex-col sm:grid sm:grid-cols-2 gap-4">
+          <app-input-regular
+            label="Start Date"
+            type="date"
+            formControlName="start_date"
+            [required]="true"
+            class="w-full"
+          ></app-input-regular>
+
+          <app-input-regular
+            label="End Date"
+            type="date"
+            formControlName="end_date"
+            [required]="true"
+            class="w-full"
+          ></app-input-regular>
+        </div>
       </div>
 
-      <div class="flex w-full flex-col items-start gap-6">
-        <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Semester Information</span>
-
-
-        <form [formGroup]="form" (ngSubmit)="onSubmitFirstStep()" class="w-full flex flex-col gap-6">
-          <div formGroupName="semester" class="flex flex-col gap-4">
-            <app-input-regular
-              label="Semester Name"
-              placeholder="eg. Fall 2025 Semester"
-              formControlName="schedule_name"
-              [required]="true"
-            ></app-input-regular>
-
-            <div class="grid w-full grid-cols-2 gap-5">
-              <app-input-regular
-                label="Start Date"
-                type="date"
-                formControlName="start_date"
-                [required]="true"
-
-              ></app-input-regular>
-
-              <app-input-regular
-                label="End Date"
-                type="date"
-                formControlName="end_date"
-                [required]="true"
-              ></app-input-regular>
-            </div>
-
-          </div>
-
-          <app-button type="submit" [disabled]="form.get('semester')?.invalid" label="Continue to add classes" variant="secondary" class="mt-4 xl:text-xl"></app-button>
-
-        </form>
-
-
-      </div>
-    }
+      <app-button 
+        type="submit" 
+        [disabled]="form.get('semester')?.invalid" 
+        label="Continue to add classes" 
+        variant="secondary" 
+        class="mt-4 xl:text-xl w-full sm:w-auto">
+      </app-button>
+    </form>
+  </div>
+}
     @case ('AddClasses'){
       <div class="header flex flex-col items-start">
         <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Add your classes.</span>
