@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InputRegularComponent } from '../../components/inputs/input-regular/input-regular.component';
 import {
@@ -21,7 +21,7 @@ import { ButtonComponent } from '../../components/button/button.component';
   templateUrl: './add-schedule.component.html',
   styleUrl: './add-schedule.component.css',
 })
-export class AddScheduleComponent {
+export class AddScheduleComponent implements OnInit {
   stepper = 0;
   stepMap = ['SemInfo', 'AddClasses', 'PreviewSchedule'];
   daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -35,6 +35,9 @@ export class AddScheduleComponent {
     '#FF6800',
     '#6BCE00',
   ];
+  currentDayIndex = 0;
+  timeSlots = Array.from({ length: 16 }, (_, i) => i + 8); // 8:00 to 23:00
+  availableDays: string[] = [];
 
   // New properties for consistent times and rooms (no longer needed globally)
   // keepTimesConstant = false;
@@ -60,6 +63,10 @@ export class AddScheduleComponent {
       color_light: ['', Validators.required],
       days: this.fb.array([]),
     });
+  }
+
+  ngOnInit() {
+    this.updateAvailableDays();
   }
 
   get currentStep() {
@@ -229,13 +236,94 @@ export class AddScheduleComponent {
   }
 
   onSubmitSecondStep() {
-  if (this.classes.length > 0) {
-    // Create complete payload for preview
-    const completePayload = this.getCompleteSchedulePayload();
-    console.log('Complete schedule payload:', completePayload);
-    this.nextStep();
-  } else {
-    console.log('Please add at least one class before continuing');
+    if (this.classes.length > 0) {
+      // Create complete payload for preview
+      const completePayload = this.getCompleteSchedulePayload();
+      console.log('Complete schedule payload:', completePayload);
+      this.nextStep();
+      this.updateAvailableDays();
+    } else {
+      console.log('Please add at least one class before continuing');
+    }
   }
-}
+
+  updateAvailableDays() {
+    const allDays = new Set<string>();
+    this.classes.value.forEach((classItem: any) => {
+      classItem.days.forEach((day: any) => allDays.add(day.day));
+    });
+    this.availableDays = Array.from(allDays).sort((a, b) => {
+      const dayOrder = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      return dayOrder.indexOf(a) - dayOrder.indexOf(b);
+    });
+  }
+
+  getCurrentDayName(): string {
+    return this.availableDays[this.currentDayIndex] || 'No Days';
+  }
+
+  previousDay() {
+    if (this.currentDayIndex > 0) {
+      this.currentDayIndex--;
+    }
+  }
+
+  nextDay() {
+    if (this.currentDayIndex < this.availableDays.length - 1) {
+      this.currentDayIndex++;
+    }
+  }
+
+  // Get events for a specific time slot
+  getEventsForTimeSlot(hour: number) {
+    const currentDay = this.availableDays[this.currentDayIndex];
+    const events: any = [];
+    const processedEvents = new Set(); // Track which events we've already processed
+
+    this.classes.value.forEach((classItem: any) => {
+      classItem.days.forEach((daySchedule: any) => {
+        if (daySchedule.day === currentDay) {
+          const startHour = parseInt(daySchedule.start_time.split(':')[0]);
+          const endHour = parseInt(daySchedule.end_time.split(':')[0]);
+          const startMinutes = parseInt(daySchedule.start_time.split(':')[1]);
+          const endMinutes = parseInt(daySchedule.end_time.split(':')[1]);
+
+          // Create unique event ID
+          const eventId = `${classItem.course_name}-${daySchedule.day}-${daySchedule.start_time}`;
+
+          // Only process this event once, and only if it starts in this hour slot
+          if (startHour === hour && !processedEvents.has(eventId)) {
+            processedEvents.add(eventId);
+
+            // Calculate total duration and position
+            const totalMinutes =
+              (endHour - startHour) * 60 + (endMinutes - startMinutes);
+            const topOffset = (startMinutes / 60) * 60; // Position within the starting hour
+            const totalHeight = (totalMinutes / 60) * 60; // Convert duration to pixels
+
+            events.push({
+              id: eventId,
+              course_name: classItem.course_name,
+              start_time: daySchedule.start_time,
+              end_time: daySchedule.end_time,
+              room: daySchedule.room,
+              color: classItem.color,
+              color_light: classItem.color_light,
+              topOffset,
+              height: totalHeight,
+            });
+          }
+        }
+      });
+    });
+
+    console.log(`Hour ${hour}:`, events);
+    return events;
+  }
+
+  finalizeSchedule() {
+    const completePayload = this.getCompleteSchedulePayload();
+    console.log('Finalizing schedule:', completePayload);
+    // Add your save logic here
+  }
 }

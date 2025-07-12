@@ -3,9 +3,15 @@
 
   @switch (currentStep){
     @case ('SemInfo'){
-  <div class="header flex flex-col items-start">
-    <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Set up your semester.</span>
-    <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">Start by defining your semester dates and schedule name.</span>
+  <div class="header flex flex-col gap-1 items-start">
+    <div class="back-btn cursor-pointer cursor w-8 h-8 rounded-full flex items-center justify-center border border-input-border">
+      <span class="text-lg">←</span>
+    </div>
+
+    <div class="flex flex-col items-start">
+      <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Set up your semester.</span>
+      <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">Start by defining your semester dates and schedule name.</span>
+    </div>
   </div>
 
   <div class="flex w-full flex-col items-start gap-6">
@@ -51,9 +57,15 @@
   </div>
 }
     @case ('AddClasses'){
-      <div class="header flex flex-col items-start">
-        <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Add your classes.</span>
-        <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">Add schedules with their schedules, rooms and customize colors.</span>
+       <div (click)="prevStep()" class="header flex flex-col gap-1 items-start">
+         <div class="back-btn cursor-pointer w-8 h-8 rounded-full flex items-center justify-center border border-input-border">
+           <span class="text-lg">←</span>
+         </div>
+     
+         <div class="flex flex-col items-start">
+           <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Set up your semester.</span>
+           <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">Start by defining your semester dates and schedule name.</span>
+         </div>
       </div>
 
       <div class="flex w-full flex-col items-start gap-6">
@@ -222,17 +234,94 @@
       </div>
     }
     @case ('PreviewSchedule'){
-      <div class="header flex flex-col items-start">
-        <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Preview your schedule.</span>
+      <div (click)="prevStep()" class="header flex flex-col gap-1 items-start">
+
+        <div class="back-btn cursor-pointer w-8 h-8 rounded-full flex items-center justify-center border border-input-border">
+           <span class="text-lg">←</span>
+         </div>
+
+         <div class="flex flex-col items-start">
+          <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Preview your schedule.</span>
         <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">Review your complete schedule before saving.</span>
+         </div>
+
       </div>
 
-      <div class="flex flex-col items-start gap-5">
-        <div class="header flex flex-col items-start">
-        <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Schedule Preview</span>
-        <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">{{getCompleteSchedulePayload().semester.schedule_name}}</span>
+      <div class="flex flex-col items-start gap-5 w-full">
+           <div class="header flex flex-col items-start">
+             <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Schedule Preview</span>
+             <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">{{getCompleteSchedulePayload().semester.schedule_name}}</span>
+           </div>
+
+           <!-- Day Navigation -->
+           <div class="day-navigation flex items-center justify-between w-full max-w-sm bg-white border border-input-border rounded-lg p-1">
+             <button 
+               (click)="previousDay()" 
+               [disabled]="currentDayIndex === 0"
+               class="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+               <span class="text-base">←</span>
+             </button>
+             
+             <span class="text-lg SF-Bold text-text-main px-4">
+               {{ getCurrentDayName() }}
+             </span>
+             
+             <button 
+               (click)="nextDay()" 
+               [disabled]="currentDayIndex === availableDays.length - 1"
+               class="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+               <span class="text-base">→</span>
+             </button>
+           </div>
+
+          <!-- Schedule Grid -->
+         <div class="schedule-grid w-full bg-white border border-input-border rounded-lg overflow-hidden">
+           <!-- Grid container with CSS Grid -->
+           <div class="grid grid-cols-[100px_1fr] bg-white">
+             
+             <!-- Generate time slots from 8:00 to 23:00 -->
+             @for (hour of timeSlots; track hour) {
+               <!-- Time label -->
+               <div class="time-slot border-b border-r border-gray-200 p-3 bg-gray-50 flex items-start">
+                 <span class="text-sm SF-Medium text-text-main">{{ hour }}:00</span>
+               </div>
+               
+               <!-- Content area for this hour -->
+               <div class="content-slot border-b border-gray-200 relative min-h-[60px] bg-white">
+                 <!-- Events for this time slot -->
+                 @for (event of getEventsForTimeSlot(hour); track event.id) {
+                   <div 
+                     [style.backgroundColor]="event.color_light"
+                     [style.top.px]="event.topOffset"
+                     [style.height.px]="event.height"
+                     class="absolute z-[10000] left-0 right-0 mx-1 rounded-md flex items-start gap-2 p-2 border-l-4"
+                     [style.border-left-color]="event.color">
+                     
+                     <div class="flex flex-col">
+                       <span class="text-sm SF-Bold text-text-main">{{ event.course_name }}</span>
+                       <span class="text-xs SF-Regular text-text-main opacity-70">
+                         {{ event.start_time }} - {{ event.end_time }}
+                       </span>
+                       <span class="text-xs SF-Regular text-text-main opacity-70">
+                         Room: <span class="SF-Bold text-text-main">{{ event.room }}</span>
+                       </span>
+                     </div>
+                   </div>
+                 }
+               </div>
+             }
+             
+           </div>
+         </div>
+
       </div>
-      </div>
+
+      <app-button 
+        type="submit" 
+        label="Save schedule" 
+        variant="secondary" 
+        class="w-full">
+      </app-button>
     }
   }
 
