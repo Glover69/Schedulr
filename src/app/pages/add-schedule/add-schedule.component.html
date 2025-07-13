@@ -104,7 +104,7 @@
               </div>
 
 
-              <div formArrayName="days" class="w-full flex flex-col gap-4 mt-4">
+              <div formArrayName="days" class="w-full flex flex-col md:grid md:grid-cols-2 gap-4 mt-4">
                 @for (dayGroup of days.controls; track $index) {
                   <div [formGroupName]="$index" class="p-6 border border-input-border rounded-lg flex flex-col gap-3">
                     <span class="text-lg tracking-tight SF-Bold text-text-main">{{dayGroup.get('day')?.value}}</span>

@@ -1,10 +1,12 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {NgOptimizedImage} from '@angular/common';
+import {CommonModule} from '@angular/common';
+import { ButtonComponent } from '../../button/button.component';
 
 @Component({
   selector: 'app-file-input',
   imports: [
-    NgOptimizedImage
+    CommonModule,
+    ButtonComponent
   ],
   templateUrl: './file-input.component.html',
   styleUrl: './file-input.component.css'

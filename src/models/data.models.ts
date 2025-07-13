@@ -1,6 +1,8 @@
 export type Schedule = {
   semester: semester;
   classes: Class[];
+  id: number;
+  created_at: Date
 }
 
 export type Toast = {

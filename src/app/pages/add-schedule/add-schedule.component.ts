@@ -14,7 +14,7 @@ import {
   downloadICSFile,
   generateICSContent,
 } from '../../../utils/calendar-export.utils';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 
 @Component({
@@ -45,6 +45,8 @@ export class AddScheduleComponent implements OnInit {
   currentDayIndex = 0;
   timeSlots = Array.from({ length: 16 }, (_, i) => i + 8); // 8:00 to 23:00
   availableDays: string[] = [];
+  isEditMode = false;
+  scheduleID: any
 
   form: FormGroup;
   classForm: FormGroup;
@@ -53,7 +55,8 @@ export class AddScheduleComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private toastService: ToastService,
-    private location: Location
+    private location: Location,
+    private route: ActivatedRoute
   ) {
     this.form = this.fb.group({
       semester: this.fb.group({
@@ -74,6 +77,13 @@ export class AddScheduleComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.scheduleID = this.route.snapshot.paramMap.get('id');
+    this.isEditMode = !!this.scheduleID;
+
+    if (this.isEditMode && this.scheduleID) {
+
+    }
+
     this.updateAvailableDays();
   }
 
@@ -81,6 +91,7 @@ export class AddScheduleComponent implements OnInit {
   goBack(){
     this.location.back()
   }
+
   // loadAllSchedules() {
   //   const saved = localStorage.getItem('schedulr-schedules');
   //   return saved ? JSON.parse(saved) : [];
@@ -386,9 +397,9 @@ export class AddScheduleComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  exportToICS() {
-    const scheduleData = this.getCompleteSchedulePayload();
-    const icsContent = generateICSContent(scheduleData);
-    downloadICSFile(icsContent, `${scheduleData.semester.schedule_name}.ics`);
-  }
+  // exportToICS() {
+  //   const scheduleData = this.getCompleteSchedulePayload();
+  //   const icsContent = generateICSContent(scheduleData);
+  //   downloadICSFile(icsContent, `${scheduleData.semester.schedule_name}.ics`);
+  // }
 }
