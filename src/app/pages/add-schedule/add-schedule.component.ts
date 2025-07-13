@@ -9,6 +9,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { ButtonComponent } from '../../components/button/button.component';
+import { ToastService } from '../../../services/toast.service';
+import {
+  downloadICSFile,
+  generateICSContent,
+} from '../../../utils/calendar-export.utils';
+import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-add-schedule',
@@ -39,14 +46,15 @@ export class AddScheduleComponent implements OnInit {
   timeSlots = Array.from({ length: 16 }, (_, i) => i + 8); // 8:00 to 23:00
   availableDays: string[] = [];
 
-  // New properties for consistent times and rooms (no longer needed globally)
-  // keepTimesConstant = false;
-  // keepRoomsConstant = false;
-
   form: FormGroup;
   classForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private toastService: ToastService,
+    private location: Location
+  ) {
     this.form = this.fb.group({
       semester: this.fb.group({
         schedule_name: ['', Validators.required],
@@ -58,7 +66,7 @@ export class AddScheduleComponent implements OnInit {
     });
 
     this.classForm = this.fb.group({
-      course_name: ['', Validators.required],
+      course_name: ['', [Validators.required]],
       color: ['', Validators.required],
       color_light: ['', Validators.required],
       days: this.fb.array([]),
@@ -68,6 +76,20 @@ export class AddScheduleComponent implements OnInit {
   ngOnInit() {
     this.updateAvailableDays();
   }
+
+
+  goBack(){
+    this.location.back()
+  }
+  // loadAllSchedules() {
+  //   const saved = localStorage.getItem('schedulr-schedules');
+  //   return saved ? JSON.parse(saved) : [];
+  // }
+
+  // loadSpecificSchedule(id: number) {
+  //   const schedules = this.loadAllSchedules();
+  //   return schedules.find((schedule: any) => schedule.id === id);
+  // }
 
   get currentStep() {
     return this.stepMap[this.stepper];
@@ -141,20 +163,35 @@ export class AddScheduleComponent implements OnInit {
 
       console.log('Added class:', classData);
       console.log('All classes:', this.classes.value);
+      this.toastService.showToast(
+        'Class added successfully.',
+        `Your class, ${classData.course_name} was added successfully!`
+      );
     } else {
       this.classForm.markAllAsTouched();
       this.days.controls.forEach((control) => control.markAllAsTouched());
     }
   }
 
-  // // Method to add class to schedule
-  // addClass() {
-  //   this.classes.push(this.classForm.value);
-  //   this.classForm.reset();
-  //   while (this.days.length) {
-  //     this.days.removeAt(0);
-  //   }
-  // }
+  removeClass(index: number) {
+    this.classes.removeAt(index);
+
+    console.log('Removed class at index:', index);
+    console.log('Remaining classes:', this.classes.value);
+
+    this.toastService.showToast(
+      'Class removed successfully.',
+      `Your class, ${this.classes.value[index].course_name} was removed from the list.`
+    );
+
+    // Update available days after removing a class
+    this.updateAvailableDays();
+
+    // Reset current day index if it's out of bounds
+    if (this.currentDayIndex >= this.availableDays.length) {
+      this.currentDayIndex = Math.max(0, this.availableDays.length - 1);
+    }
+  }
 
   getRoomsForClass(days: any[]): string {
     const uniqueRooms = [...new Set(days.map((day) => day.room))];
@@ -323,7 +360,35 @@ export class AddScheduleComponent implements OnInit {
 
   finalizeSchedule() {
     const completePayload = this.getCompleteSchedulePayload();
-    console.log('Finalizing schedule:', completePayload);
-    // Add your save logic here
+    const existingSchedules = JSON.parse(
+      localStorage.getItem('schedulr-schedules') || '[]'
+    );
+
+    // Add new schedule to array
+    existingSchedules.push({
+      ...completePayload,
+      id: Date.now(), // Add unique ID
+      created_at: new Date().toISOString(),
+    });
+
+    // Save array back to localStorage
+    localStorage.setItem(
+      'schedulr-schedules',
+      JSON.stringify(existingSchedules)
+    );
+    console.log('Schedule added to localStorage array:', existingSchedules);
+
+    this.toastService.showToast(
+      'Schedule saved successfully.',
+      `Your schedule, ${completePayload.semester.schedule_name} was saved successfully!`
+    );
+
+    this.router.navigate(['/']);
+  }
+
+  exportToICS() {
+    const scheduleData = this.getCompleteSchedulePayload();
+    const icsContent = generateICSContent(scheduleData);
+    downloadICSFile(icsContent, `${scheduleData.semester.schedule_name}.ics`);
   }
 }

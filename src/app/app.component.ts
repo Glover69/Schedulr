@@ -1,12 +1,32 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
+import { ToastComponent } from './components/toast/toast.component';
+import { ToastService } from '../services/toast.service';
+import { Toast } from '../models/data.models';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, ToastComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
+  toastMessage: string = '';
+  toastHeader: string = '';
   title = 'schedulr';
+
+  constructor(private router: Router, private toastService: ToastService){}
+
+  ngOnInit() {
+    
+    this.toastService.toast$.subscribe((toast: Toast) => {
+      this.toastMessage = `${toast.message}`;
+      this.toastHeader = `${toast.header}`;
+      // Automatically hide the snackbar after 5 seconds
+      setTimeout(() => {
+        // this.animateOut();
+        (this.toastHeader = ''), (this.toastMessage = '');
+      }, 3500);
+    });
+  }
 }

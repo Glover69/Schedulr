@@ -3,6 +3,11 @@ export type Schedule = {
   classes: Class[];
 }
 
+export type Toast = {
+  header: string;
+  message: string;
+}
+
 export type Class = {
   course_name: string; // e.g., "Intro to AI"
   days: Days[]; // e.g., ["Monday", "Wednesday"]

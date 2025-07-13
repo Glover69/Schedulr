@@ -1,10 +1,14 @@
 <div class="flex flex-col items-start gap-8 xl:gap-12 lg:px-20 xl:px-36 2xl:px-72 pt-8">
 
+  <div class="header w-full flex flex-col items-start gap-2">
+    <img src="logos/icon-512x512.png" priority class="xl:w-24 xl:h-24" alt="" width="72" height="72">
+    <span class="SF-Bold text-3xl xl:text-4xl tracking-tight text-text-main">Schedulr</span>
+  </div>
 
   @switch (currentStep){
     @case ('SemInfo'){
   <div class="header flex flex-col gap-1 items-start">
-    <div class="back-btn cursor-pointer cursor w-8 h-8 rounded-full flex items-center justify-center border border-input-border">
+    <div (click)="goBack()" class="back-btn cursor-pointer cursor w-8 h-8 rounded-full flex items-center justify-center border border-input-border">
       <span class="text-lg">←</span>
     </div>
 
@@ -55,7 +59,7 @@
       </app-button>
     </form>
   </div>
-}
+    }
     @case ('AddClasses'){
        <div (click)="prevStep()" class="header flex flex-col gap-1 items-start">
          <div class="back-btn cursor-pointer w-8 h-8 rounded-full flex items-center justify-center border border-input-border">
@@ -192,7 +196,7 @@
 
           <div class="flex w-full xl:grid xl:grid-cols-2 flex-col items-start gap-6">
             @for (item of classes.value; track $index) {
-              <div [style.backgroundColor]="item.color_light" class="single-class w-full items-stretch flex  gap-4 rounded-xl p-5">
+              <div [style.backgroundColor]="item.color_light" class="single-class relative w-full items-stretch flex  gap-4 rounded-xl p-5">
                 <div [style.backgroundColor]="item.color" class="w-4 flex-shrink-0 rounded-lg"></div>
 
                 <div class="right flex flex-col items-start gap-2 flex-1">
@@ -211,24 +215,19 @@
                     <span class="text-text-main lg:text-xl SF-Bold tracking-tight">
                           Rooms: <span class="SF-Regular ml-1">{{ getRoomsForClass(item.days) }}</span>
                     </span>
-
-
                   </div>
 
 
                 </div>
 
+                <img class="absolute top-5 right-5 w-6 h-6 cursor-pointer" (click)="removeClass($index)" src="/icons/trash.svg" alt="">
+
               </div>
             }
 
           </div>
-
-
           <app-button type="submit" (click)="onSubmitSecondStep()" [disabled]="classes.length == 0" label="Proceed to Preview" variant="secondary" class="mt-4 xl:text-xl"></app-button>
-
         }
-
-
 
 
       </div>
@@ -298,13 +297,13 @@
                      [style.border-left-color]="event.color">
                      
                      <div class="flex flex-col">
-                       <span class="text-sm SF-Bold text-text-main">{{ event.course_name }}</span>
-                       <span class="text-xs SF-Regular text-text-main opacity-70">
+                       <span class="text-sm xl:text-base SF-Bold text-text-main">{{ event.course_name }}</span>
+                       <span class="text-xs xl:text-sm SF-Regular text-text-main opacity-70">
                          {{ event.start_time }} - {{ event.end_time }}
                        </span>
-                       <span class="text-xs SF-Regular text-text-main opacity-70">
+                       <!-- <span class="text-xs xl:text-sm SF-Regular text-text-main opacity-70">
                          Room: <span class="SF-Bold text-text-main">{{ event.room }}</span>
-                       </span>
+                       </span> -->
                      </div>
                    </div>
                  }
@@ -317,6 +316,7 @@
       </div>
 
       <app-button 
+        (click)="finalizeSchedule()"
         type="submit" 
         label="Save schedule" 
         variant="secondary" 

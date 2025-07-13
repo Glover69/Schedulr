@@ -1,4 +1,9 @@
-<div class="flex flex-col items-start gap-8 xl:gap-16">
+<div class="flex flex-col items-start gap-8">
+
+  <div class="header flex flex-col items-start gap-2 2xl:px-32">
+    <img src="logos/icon-512x512.png" priority class="xl:w-24 xl:h-24" alt="" width="72" height="72">
+    <span class="SF-Bold text-3xl xl:text-4xl tracking-tight text-text-main">Schedulr</span>
+  </div>
 
 
 @if (schedules.length == 0) {
@@ -10,7 +15,7 @@
 
 
     <div class="content-for-empty-dashboard w-full flex flex-col items-center justify-center">
-      <img ngSrc="/images/empty-dashboard.png" alt="Empty Dashboard" class="w-full md:w-3/4 lg:w-1/2 xl:w-1/4" height="1096" width="1096">
+      <img ngSrc="/images/empty-dashboard.png" priority alt="Empty Dashboard" class="w-full md:w-3/4 lg:w-1/2 xl:w-1/4" height="1096" width="1096">
       <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight mt-4">No Schedules Available</span>
       <span class="text-text-main text-sm lg:text-base xl:text-2xl opacity-60 SF-Medium tracking-tight">Your completed schedules will appear here when done!</span>
       <app-button [routerLink]="'/add-schedule'" label="Create a class schedule" variant="secondary" [hasIcon]="true" iconPath="icons/add.svg" class="mt-4 xl:text-xl"></app-button>
@@ -21,24 +26,27 @@
   <!-- View for when dashboard has content -->
 
   <!-- Banner for creating schedules -->
-  <div class="flex flex-col lg:flex-row items-center justify-between gap-0 px-5 md:px-7 xl:px-16 xl:py-7  py-4 md:py-5 bg-secondary w-full rounded-xl xl:mt-8">
-    <div class="left flex flex-col items-start xl:gap-2">
-      <span class="text-text-main text-xl lg:text-2xl xl:text-4xl SF-Bold tracking-tight">Create new schedule.</span>
-      <span class="text-text-main text-sm md:w-3/5 md:text-base xl:text-2xl opacity-60 SF-Medium tracking-tight">Set up your semester schedule with classes, times, and export to your preferred calendar!</span>
-      <app-button [routerLink]="'/add-schedule'" label="Create a class schedule" variant="primary" [hasIcon]="true" iconPath="icons/add-secondary.svg" class="mt-4 xl:text-xl"></app-button>
+   <div class="w-full 2xl:px-32">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-0 px-5 md:px-7 xl:px-16 xl:py-7  py-4 md:py-5 bg-secondary w-full rounded-xl">
+     <div class="left flex flex-col items-start xl:gap-2">
+       <span class="text-text-main text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl SF-Bold tracking-tight">Create new schedule.</span>
+       <span class="text-text-main text-sm md:w-3/5 md:text-base xl:text-xl 2xl:text-2xl opacity-60 SF-Medium tracking-tight">Set up your semester schedule with classes, times, and export to your preferred calendar!</span>
+       <app-button [routerLink]="'/add-schedule'" label="Create a class schedule" variant="primary" [hasIcon]="true" iconPath="icons/add-secondary.svg" class="mt-4"></app-button>
+     </div>
+     <img ngSrc="/images/create-schedule.png" alt="Create Schedule" class="md:w-1/2 lg:w-1/4 hidden md:flex" height="1096" width="1096">
     </div>
+   </div>
 
-    <img ngSrc="/images/create-schedule.png" alt="Create Schedule" class="lg:w-1/4 hidden lg:flex" height="1096" width="1096">
-  </div>
+  
 
-  <div class="header flex flex-col items-start">
+  <div class="header flex flex-col items-start 2xl:px-32">
     <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Dashboard</span>
     <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">Your schedules</span>
   </div>
 
 
   <!-- Grid container that holds schedule cards -->
-  <div class="flex w-full flex-col gap-8 md:grid md:grid-cols-2 lg:grid-cols-3">
+  <div class="flex w-full flex-col gap-8 md:grid md:grid-cols-2 lg:grid-cols-3 2xl:px-32">
     @for (schedule of schedules; track $index) {
       <div class="schedule-card flex flex-col items-start gap-3">
         <div class="top-side w-full rounded-xl border-2 border-secondary p-0.5">
@@ -53,7 +61,7 @@
                   </span>
                 }
 
-                @if (schedule.classes.length - 2 !== 0) {
+                @if (schedule.classes.length - 2 >= 0) {
                   <span class='text-xs xl:text-sm text-[#B42318] bg-[#FEF3F2] SF-Medium tracking-tight p-1 px-2 rounded-full'>
                   +{{schedule.classes.length - 2}}
                   </span>

@@ -1,13 +1,16 @@
 <section class="w-full flex flex-col gap-2 p-5 py-24 md:px-16 lg:px-24">
 
-  <div class="header flex flex-col items-start gap-2 lg:px-20 xl:px-36 2xl:px-72">
+  <!-- <div class="header flex flex-col items-start gap-2 lg:px-20 xl:px-36 2xl:px-72">
     <img src="logos/icon-512x512.png" priority class="xl:w-24 xl:h-24" alt="" width="72" height="72">
     <span class="SF-Bold text-3xl xl:text-4xl tracking-tight text-text-main">Schedulr</span>
-  </div>
+  </div> -->
 
 
   <router-outlet />
 
 </section>
+
+<app-toast id="toast" class="flex items-center justify-center lg:justify-end" [header]="toastHeader" [message]="toastMessage"></app-toast>
+
 
 

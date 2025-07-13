@@ -2,7 +2,7 @@
         [ngClass]="{
         'bg-primary': variant === 'primary',
         'bg-secondary': variant === 'secondary',
-        'px-4 xl:px-6 xl:py-3 py-2 flex items-center gap-2 justify-center rounded-lg': true
+        'px-4 py-2 2xl:px-5 2xl:py-3 flex items-center gap-2 justify-center rounded-lg': true
       }"
         [disabled]="disabled || externalLoading"
         (click)="handleClick()"
@@ -18,7 +18,7 @@
           'text-secondary': variant === 'primary',
           'text-primary': variant === 'secondary',
         }"
-    class="SF-Bold text-sm lg:text-base xl:text-xl"
+    class="SF-Bold text-sm lg:text-base 2xl:text-xl"
   >{{ label }}</span
   >
 </button>
