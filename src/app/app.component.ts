@@ -3,6 +3,7 @@ import { Router, RouterOutlet } from '@angular/router';
 import { ToastComponent } from './components/toast/toast.component';
 import { ToastService } from '../services/toast.service';
 import { Toast } from '../models/data.models';
+import { DatePickerComponent } from "./components/inputs/date-picker/date-picker.component";
 
 @Component({
   selector: 'app-root',

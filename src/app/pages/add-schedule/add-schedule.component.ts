@@ -10,12 +10,11 @@ import {
 } from '@angular/forms';
 import { ButtonComponent } from '../../components/button/button.component';
 import { ToastService } from '../../../services/toast.service';
-import {
-  downloadICSFile,
-  generateICSContent,
-} from '../../../utils/calendar-export.utils';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { generateICSContent, downloadICSFile } from '../../../utils/calendar-export.utils';
+import { DatePickerComponent } from '../../components/inputs/date-picker/date-picker.component';
+import { TimePickerComponent } from '../../components/inputs/time-picker/time-picker.component';
 
 @Component({
   selector: 'app-add-schedule',
@@ -24,6 +23,8 @@ import { Location } from '@angular/common';
     InputRegularComponent,
     ReactiveFormsModule,
     ButtonComponent,
+    DatePickerComponent,
+    TimePickerComponent
   ],
   templateUrl: './add-schedule.component.html',
   styleUrl: './add-schedule.component.css',
@@ -394,12 +395,14 @@ export class AddScheduleComponent implements OnInit {
       `Your schedule, ${completePayload.semester.schedule_name} was saved successfully!`
     );
 
+    this.exportToICS()
+
     this.router.navigate(['/']);
   }
 
-  // exportToICS() {
-  //   const scheduleData = this.getCompleteSchedulePayload();
-  //   const icsContent = generateICSContent(scheduleData);
-  //   downloadICSFile(icsContent, `${scheduleData.semester.schedule_name}.ics`);
-  // }
+  exportToICS() {
+    const scheduleData = this.getCompleteSchedulePayload();
+    const icsContent = generateICSContent(scheduleData);
+    downloadICSFile(icsContent, `${scheduleData.semester.schedule_name}.ics`);
+  }
 }

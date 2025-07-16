@@ -32,21 +32,27 @@
         ></app-input-regular>
 
         <div class="w-full flex flex-col sm:grid sm:grid-cols-2 gap-4">
-          <app-input-regular
+          <!-- <app-input-regular
             label="Start Date"
             type="date"
             formControlName="start_date"
             [required]="true"
             class="w-full"
-          ></app-input-regular>
+          ></app-input-regular> -->
 
-          <app-input-regular
-            label="End Date"
+          <app-date-picker label="Start Date"
+            type="date"
+            formControlName="start_date"
+            [required]="true"
+            class="w-full">
+          </app-date-picker>
+
+          <app-date-picker label="End Date"
             type="date"
             formControlName="end_date"
             [required]="true"
-            class="w-full"
-          ></app-input-regular>
+            class="w-full">
+          </app-date-picker>
         </div>
       </div>
 
@@ -110,18 +116,30 @@
                     <span class="text-lg tracking-tight SF-Bold text-text-main">{{dayGroup.get('day')?.value}}</span>
                     <div class="flex w-full flex-col items-start gap-4">
                       <div class="w-full grid grid-cols-2 gap-8">
-                        <app-input-regular
+                        <!-- <app-input-regular
                         label="Start Time"
                         type="time"
                         formControlName="start_time"
                         [required]="true"
-                        ></app-input-regular>
-                        <app-input-regular
+                        ></app-input-regular> -->
+
+                        <app-time-picker
+                          label="Start Time"
+                          formControlName="start_time"
+                          [required]="true">
+                        </app-time-picker>
+
+                        <app-time-picker
+                          label="End Time"
+                          formControlName="end_time"
+                          [required]="true">
+                        </app-time-picker>
+                        <!-- <app-input-regular
                           label="End Time"
                           type="time"
                           formControlName="end_time"
                           [required]="true"
-                        ></app-input-regular>
+                        ></app-input-regular> -->
                       </div>
 
                       <app-input-regular
@@ -318,7 +336,7 @@
       <app-button 
         (click)="finalizeSchedule()"
         type="submit" 
-        label="Save schedule" 
+        label="Save and Download Schedule" 
         variant="secondary" 
         class="w-full">
       </app-button>
