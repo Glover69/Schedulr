@@ -21,6 +21,7 @@ export class TimePickerComponent implements ControlValueAccessor {
   @Input() label: string = '';
   @Input() placeholder: string = 'Select time';
   @Input() required: boolean = false;
+  @Input() placeholder_two: string = ''
   
   value: string = '';
   isOpen: boolean = false;

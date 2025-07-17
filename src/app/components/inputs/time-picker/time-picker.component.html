@@ -34,7 +34,7 @@
       
       <!-- Header -->
       <div class="p-4 border-b border-gray-200">
-        <span class="text-base SF-Medium text-text-main">Start with</span>
+        <span class="text-base SF-Medium text-text-main">{{placeholder_two}}</span>
         <div class="mt-2 text-2xl SF-Bold text-text-main">
           {{ selectedHour }}:{{ selectedMinute }} {{ selectedPeriod }}
         </div>
@@ -52,7 +52,7 @@
                 <button
                   type="button"
                   (click)="selectHour(hour)"
-                  class="w-full px-3 py-2 text-left hover:bg-gray-100 border-b border-gray-100 last:border-b-0"
+                  class="w-full px-3 py-2 text-left hover:cursor-pointer border-b border-gray-100 last:border-b-0"
                   [class.bg-primary]="selectedHour === hour"
                   [class.text-white]="selectedHour === hour"
                   [class.text-text-main]="selectedHour !== hour">
@@ -70,7 +70,7 @@
                 <button
                   type="button"
                   (click)="selectMinute(minute)"
-                  class="w-full px-3 py-2 text-left hover:bg-gray-100 border-b border-gray-100 last:border-b-0"
+                  class="w-full px-3 py-2 text-left border-b hover:cursor-pointer border-gray-100 last:border-b-0"
                   [class.bg-primary]="selectedMinute === minute"
                   [class.text-white]="selectedMinute === minute"
                   [class.text-text-main]="selectedMinute !== minute">
@@ -87,7 +87,7 @@
               <button
                 type="button"
                 (click)="selectPeriod('AM')"
-                class="w-full px-3 py-2 text-left hover:bg-gray-100 border-b border-gray-100"
+                class="w-full px-3 py-2 text-left hover:cursor-pointer border-b border-gray-100"
                 [class.bg-primary]="selectedPeriod === 'AM'"
                 [class.text-white]="selectedPeriod === 'AM'"
                 [class.text-text-main]="selectedPeriod !== 'AM'">
@@ -96,7 +96,7 @@
               <button
                 type="button"
                 (click)="selectPeriod('PM')"
-                class="w-full px-3 py-2 text-left hover:bg-gray-100"
+                class="w-full px-3 py-2 text-left hover:cursor-pointer"
                 [class.bg-primary]="selectedPeriod === 'PM'"
                 [class.text-white]="selectedPeriod === 'PM'"
                 [class.text-text-main]="selectedPeriod !== 'PM'">

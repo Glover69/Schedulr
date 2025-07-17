@@ -47,12 +47,22 @@
             class="w-full">
           </app-date-picker>
 
-          <app-date-picker label="End Date"
+          <div class="flex flex-col items-start">
+            <app-date-picker label="End Date"
             type="date"
             formControlName="end_date"
             [required]="true"
             class="w-full">
-          </app-date-picker>
+            </app-date-picker>
+
+            <!-- Show error message for date range -->
+            @if (form.get('semester')?.hasError('dateRange')) {
+              <div class="text-red-500 SF-Regular tracking-tight text-sm mt-2">
+                End date must be after start date
+              </div>
+            }
+          </div>
+
         </div>
       </div>
 
@@ -126,14 +136,32 @@
                         <app-time-picker
                           label="Start Time"
                           formControlName="start_time"
+                          placeholder_two="Start at"
                           [required]="true">
                         </app-time-picker>
 
                         <app-time-picker
                           label="End Time"
+                          placeholder_two="End at"
                           formControlName="end_time"
                           [required]="true">
                         </app-time-picker>
+
+                        <!-- <div class="flex w-full flex-col items-start">
+                          <app-time-picker
+                          label="End Time"
+                          placeholder_two="End at"
+                          formControlName="end_time"
+                          class="w-full"
+                          [required]="true">
+                        </app-time-picker>
+              
+                          @if (form.get('days')?.hasError('timeRange')) {
+                            <div class="text-red-500 SF-Regular tracking-tight text-sm mt-2">
+                              End time must be after start time
+                            </div>
+                          }
+                         </div> -->
                         <!-- <app-input-regular
                           label="End Time"
                           type="time"

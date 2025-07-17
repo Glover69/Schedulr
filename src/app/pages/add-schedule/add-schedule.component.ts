@@ -2,17 +2,22 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InputRegularComponent } from '../../components/inputs/input-regular/input-regular.component';
 import {
+  AbstractControl,
   FormArray,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
+  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { ButtonComponent } from '../../components/button/button.component';
 import { ToastService } from '../../../services/toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { generateICSContent, downloadICSFile } from '../../../utils/calendar-export.utils';
+import {
+  generateICSContent,
+  downloadICSFile,
+} from '../../../utils/calendar-export.utils';
 import { DatePickerComponent } from '../../components/inputs/date-picker/date-picker.component';
 import { TimePickerComponent } from '../../components/inputs/time-picker/time-picker.component';
 
@@ -24,7 +29,7 @@ import { TimePickerComponent } from '../../components/inputs/time-picker/time-pi
     ReactiveFormsModule,
     ButtonComponent,
     DatePickerComponent,
-    TimePickerComponent
+    TimePickerComponent,
   ],
   templateUrl: './add-schedule.component.html',
   styleUrl: './add-schedule.component.css',
@@ -47,7 +52,7 @@ export class AddScheduleComponent implements OnInit {
   timeSlots = Array.from({ length: 16 }, (_, i) => i + 8); // 8:00 to 23:00
   availableDays: string[] = [];
   isEditMode = false;
-  scheduleID: any
+  scheduleID: any;
 
   form: FormGroup;
   classForm: FormGroup;
@@ -65,7 +70,7 @@ export class AddScheduleComponent implements OnInit {
         start_date: ['', Validators.required],
         end_date: ['', Validators.required],
         // excluded_dates: this.fb.array([])
-      }),
+      }, { validators: this.dateRangeValidator }),
       classes: this.fb.array([]),
     });
 
@@ -82,15 +87,40 @@ export class AddScheduleComponent implements OnInit {
     this.isEditMode = !!this.scheduleID;
 
     if (this.isEditMode && this.scheduleID) {
-
     }
 
     this.updateAvailableDays();
   }
 
+  goBack() {
+    this.location.back();
+  }
 
-  goBack(){
-    this.location.back()
+  // Add this custom validator method
+  dateRangeValidator(formGroup: AbstractControl): ValidationErrors | null {
+    const startDate = formGroup.get('start_date')?.value;
+    const endDate = formGroup.get('end_date')?.value;
+
+    if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
+      return { dateRange: true };
+    }
+    return null;
+  }
+
+  timeRangeValidator(formGroup: AbstractControl): ValidationErrors | null {
+    const startTime = formGroup.get('start_time')?.value
+    const endTime = formGroup.get('end_time')?.value
+
+    console.log("Start & End times: ", startTime, endTime)
+    console.log("Is start time greater than end time?: ", startTime > endTime)
+    // console.log(new Date().getHours())
+
+
+    if(startTime && endTime && startTime < endTime){
+      console.log("Lol")
+      return { timeRange: true }
+    }
+    return null
   }
 
   // loadAllSchedules() {
@@ -395,7 +425,7 @@ export class AddScheduleComponent implements OnInit {
       `Your schedule, ${completePayload.semester.schedule_name} was saved successfully!`
     );
 
-    this.exportToICS()
+    this.exportToICS();
 
     this.router.navigate(['/']);
   }
