@@ -113,11 +113,15 @@ export class TimePickerComponent implements ControlValueAccessor {
     switch (state) {
       case 'open':
         // Element already starts at translateY(100%) from CSS
-        gsap.to(element, {
-          y: 0, // Animate to final position
-          duration: 0.4,
-          ease: 'power3.out',
-        });
+        gsap.fromTo(
+          element,
+          { y: '100%' },
+          {
+            y: 0, // Animate to final position
+            duration: 0.25,
+            ease: 'power3.out',
+          }
+        );
         break;
       case 'close':
         gsap.to(element, {
