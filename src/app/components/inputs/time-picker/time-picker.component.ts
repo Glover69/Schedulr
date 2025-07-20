@@ -156,6 +156,7 @@ export class TimePickerComponent implements ControlValueAccessor {
   }
 
   closeTimePicker() {
+    // event?.preventDefault()
     if (!this.isOpen) return;
     // setTimeout(() => {
     //   animateDrawer('close', this.drawerRef?.nativeElement, () => {
