@@ -171,7 +171,7 @@ export class AddScheduleComponent implements OnInit {
       day: [day, Validators.required],
       start_time: ['', Validators.required],
       end_time: ['', Validators.required],
-      room: ['', Validators.required],
+      room: [''],
     });
 
     this.days.push(dayForm);
