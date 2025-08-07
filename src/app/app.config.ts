@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideLottieOptions } from 'ngx-lottie';
+import { GoogleAuthService } from '../services/google-auth.service';
 
 if (!isDevMode()) {
     // Disable all console logging in production
@@ -21,6 +22,8 @@ export const appConfig: ApplicationConfig = {
     provideLottieOptions({
       player: () => import('lottie-web'),
     }),
+    
+    GoogleAuthService
 
   ]
 };

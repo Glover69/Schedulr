@@ -2,10 +2,11 @@ import { Component, Input } from '@angular/core';
 import { LottieComponent } from 'ngx-lottie';
 import {CommonModule, NgClass} from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { LabelComponent } from '../label/label.component';
 
 @Component({
   selector: 'app-button',
-  imports: [LottieComponent, CommonModule, NgClass, RouterModule],
+  imports: [LottieComponent, LabelComponent, CommonModule, NgClass, RouterModule],
   templateUrl: './button.component.html',
   styleUrl: './button.component.css'
 })

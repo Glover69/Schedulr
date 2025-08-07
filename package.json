@@ -20,6 +20,7 @@
     "@angular/router": "^19.1.0",
     "@angular/service-worker": "^19.1.0",
     "@tailwindcss/postcss": "^4.1.11",
+    "google-auth-library": "^10.2.1",
     "gsap": "^3.13.0",
     "ics": "^3.8.1",
     "lottie-web": "^5.13.0",

@@ -1,16 +1,28 @@
 <div class="input-group flex flex-col gap-1 items-start w-full">
   @if (isLabel) {
-    <label class="text-sm lg:text-base SF-Medium text-text-main tracking-tight">
-    {{ label }}
+    <!-- <label class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"> -->
+      <app-label [text]="label" [size]="'Regular'"></app-label>
+    <!-- {{ label }} -->
     @if (required) {
-      <span class="text-red-500">*</span>
+      <!-- <span class="text-red-500">*</span> -->
     }
-    </label>
   }
+
+  <!-- <input
+    [attr.minlength]="minLength"
+    class="focus:outline-none text-text-main appearance-none -webkit-appearance-none rounded-lg border border-input-border bg-white py-2 px-3 w-full shadow-sm placeholder:text-[#737373] placeholder:text-sm lg:placeholder:text-base SF-Regular"
+    [placeholder]="placeholder"
+    [type]="type"
+    [value]="value"
+    [required]="required"
+    (input)="onInput($event)"
+    (blur)="onTouched()"
+    [disabled]="disabled"
+  /> -->
 
   <input
     [attr.minlength]="minLength"
-    class="focus:outline-none text-text-main appearance-none -webkit-appearance-none rounded-lg border border-input-border bg-white py-2 px-3 lg:py-3 lg:px-4 w-full placeholder:text-[#94A3B8] placeholder:text-sm lg:placeholder:text-base SF-Regular"
+    class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
     [placeholder]="placeholder"
     [type]="type"
     [value]="value"

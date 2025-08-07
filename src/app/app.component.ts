@@ -16,6 +16,10 @@ export class AppComponent {
   toastHeader: string = '';
   title = 'schedulr';
 
+  get isAuthRoute(): boolean {
+    return this.router.url.includes('/auth') || this.router.url === '/auth-callback';
+  }
+
   constructor(private router: Router, private toastService: ToastService){}
 
   ngOnInit() {

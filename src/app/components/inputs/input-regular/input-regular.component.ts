@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import {Component, forwardRef, Input} from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import { LabelComponent } from '../../label/label.component';
 
 
 @Component({
   selector: 'app-input-regular',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LabelComponent],
   templateUrl: './input-regular.component.html',
   styleUrl: './input-regular.component.css',
   providers: [

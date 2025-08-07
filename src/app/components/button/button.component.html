@@ -13,12 +13,17 @@
   }@else if(hasIcon){
     <img class="w-4 lg:w-6 xl:w-8" [src]="iconPath" alt="">
   }
-  <span
+  <!-- <span
     [ngClass]="{
           'text-secondary': variant === 'primary',
           'text-primary': variant === 'secondary',
         }"
     class="SF-Bold text-sm lg:text-base 2xl:text-xl"
   >{{ label }}</span
-  >
+  > -->
+
+  <app-label [forButton]="true" [ngClass]="{
+          'text-secondary!': variant === 'primary',
+          'text-primary!': variant === 'secondary',
+        }" [text]="label" class="text-sm lg:text-base xl:text-xl" [size]="'Medium'"></app-label>
 </button>

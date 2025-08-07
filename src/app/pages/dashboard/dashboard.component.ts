@@ -3,10 +3,13 @@ import {CommonModule} from '@angular/common';
 import {Schedule} from '../../../models/data.models';
 import {ButtonComponent} from '../../components/button/button.component';
 import { downloadICSFile, generateICSContent } from '../../../utils/calendar-export.utils';
+import { environment } from '../../../environments/environment';
+import { GoogleAuthService, GoogleUser } from '../../../services/google-auth.service';
+import { LabelComponent } from "../../components/label/label.component";
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, ButtonComponent],
+  imports: [CommonModule, ButtonComponent, LabelComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -15,12 +18,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ]
 
-  constructor() {
+  clientId = environment.googleClientId
+  user!: GoogleUser | null
+  
+  constructor(private googleAuthService: GoogleAuthService) {
 
   }
 
   ngOnInit() {
     this.loadAllSchedules()
+
+    this.googleAuthService.user$.subscribe({
+      next: (user: GoogleUser | null) => {
+        this.user = user;
+        console.log(user)
+      },
+      error: (err: any) => {
+        console.log("An error occured: ", err)
+      }
+    })
+
+    this.googleAuthService.checkExistingAuth();
   }
 
   loadAllSchedules() {

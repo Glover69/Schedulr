@@ -1,0 +1,11 @@
+@if (!forButton) {
+    <label [ngClass]="{'SF-Regular text-muted-foreground text-sm': size === 'Regular', 'SF-Medium': size === 'Medium', 'SF-Bold leading-none text-text-main tracking-tight': size === 'Bold'}" class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50">
+    {{text}}
+</label>
+}  @else {
+    <label [ngClass]="{'SF-Regular': size === 'Regular', 'SF-Medium': size === 'Medium', 'SF-Bold leading-none': size === 'Bold'}" class="flex items-center gap-2 text-sm cursor-pointer leading-none font-medium group-data-[disabled=true]:opacity-50 peer-disabled:opacity-50">
+    {{text}}
+</label>
+
+}
+
