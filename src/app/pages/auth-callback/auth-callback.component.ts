@@ -43,7 +43,7 @@ export class AuthCallbackComponent {
           const userData = typeof user === 'string' ? JSON.parse(user) : user;
           
           // Update the auth service with the user data
-          this.googleAuthService.handleSuccessfulAuth(userData, token);
+          // this.googleAuthService.handleSuccessfulAuth(userData, token);
           
           // Redirect to dashboard
           setTimeout(() => {
@@ -71,7 +71,7 @@ export class AuthCallbackComponent {
     if (storedToken && storedUser) {
       try {
         const userData = JSON.parse(storedUser);
-        this.googleAuthService.handleSuccessfulAuth(userData, storedToken);
+        // this.googleAuthService.handleSuccessfulAuth(userData, storedToken);
         this.router.navigate(['/dashboard']);
       } catch (error) {
         console.error('Error with stored auth data:', error);

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { GoogleAuthService } from '../services/google-auth.service';
 import { map } from 'rxjs/operators';
 
@@ -14,20 +14,14 @@ export class AuthGuard implements CanActivate {
     private router: Router
   ) {}
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<boolean> | Promise<boolean> | boolean {
-    
-    return this.googleAuthService.user$.pipe(
-      map(user => {
-        if (user) {
-          return true;
-        } else {
-          this.router.navigate(['/auth']);
-          return false;
-        }
-      })
-    );
+  async canActivate(): Promise<boolean> {
+    // Ensure user is loaded
+    await this.googleAuthService.checkExistingAuth();
+    const user = await firstValueFrom(this.googleAuthService.user$);
+    if (!user) {
+      this.router.navigate(['/auth']);
+      return false;
+    }
+    return true;
   }
 }

@@ -11,14 +11,6 @@
     @if (!user) {
       <app-button [routerLink]="'/auth'" label="Login" variant="secondary" class="xl:text-xl"></app-button>
 
-      <div id="g_id_onload"
-     [attr.data-client_id]="clientId"
-     data-context="signin"
-     data-ux_mode="popup"
-     data-login_uri="http://localhost:2005/api/schedulr/google-auth/auth-callback"
-     data-auto_select="true"
-     data-itp_support="true">
-    </div>
     }@else {
       <div class="flex items-center gap-2">
         <div class="img-container w-12 h-12 overflow-hidden rounded-lg">
