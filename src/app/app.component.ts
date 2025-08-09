@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
   private auth = inject(GoogleAuthService);
 
   async ngOnInit() {
-    await this.auth.checkExistingAuth();
+    // await this.auth.hydrate();
 
     this.toastService.toast$.subscribe((toast: Toast) => {
       this.toastMessage = `${toast.message}`;

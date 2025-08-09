@@ -6,6 +6,7 @@ import { downloadICSFile, generateICSContent } from '../../../utils/calendar-exp
 import { environment } from '../../../environments/environment';
 import { GoogleAuthService, GoogleUser } from '../../../services/google-auth.service';
 import { LabelComponent } from "../../components/label/label.component";
+import { SchedulesService } from '../../../services/schedules.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,7 +22,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   clientId = environment.googleClientId
   user!: GoogleUser | null
   
-  constructor(private googleAuthService: GoogleAuthService) {
+  constructor(private googleAuthService: GoogleAuthService, private schedulesService: SchedulesService) {
 
   }
 
@@ -31,14 +32,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.googleAuthService.user$.subscribe({
       next: (user: GoogleUser | null) => {
         this.user = user;
-        console.log(user)
+        // console.log(user)
+
+        if (user) {
+          this.schedulesService.listMine().subscribe({
+            next: (res: any) => {
+              this.schedules = res.schedules
+              console.log(this.schedules)
+            },
+            error: (err: any) => {
+              console.log("An error occured whilst fetching user's schedules: ", err)
+            },
+          });
+        }
       },
       error: (err: any) => {
         console.log("An error occured: ", err)
       }
     })
-
-    this.googleAuthService.checkExistingAuth();
   }
 
   loadAllSchedules() {

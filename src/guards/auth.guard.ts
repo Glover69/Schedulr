@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
-import { firstValueFrom, Observable } from 'rxjs';
+import { CanActivate, Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { GoogleAuthService } from '../services/google-auth.service';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +15,7 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(): Promise<boolean> {
     // Ensure user is loaded
-    await this.googleAuthService.checkExistingAuth();
+    await this.googleAuthService.hydrate();
     const user = await firstValueFrom(this.googleAuthService.user$);
     if (!user) {
       this.router.navigate(['/auth']);

@@ -1,10 +1,11 @@
-import { ApplicationConfig, provideZoneChangeDetection, isDevMode } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection, isDevMode, APP_INITIALIZER } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideLottieOptions } from 'ngx-lottie';
 import { GoogleAuthService } from '../services/google-auth.service';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 if (!isDevMode()) {
     // Disable all console logging in production
@@ -22,8 +23,12 @@ export const appConfig: ApplicationConfig = {
     provideLottieOptions({
       player: () => import('lottie-web'),
     }),
-    
-    GoogleAuthService
-
+    provideHttpClient(withFetch()),
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
+      useFactory: (auth: GoogleAuthService) => () => auth.hydrate(),
+      deps: [GoogleAuthService],
+    },
   ]
 };
