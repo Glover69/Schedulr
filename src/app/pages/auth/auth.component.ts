@@ -5,13 +5,13 @@ import {
 } from '../../../services/google-auth.service';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../environments/environment';
-import { ButtonComponent } from '../../components/button/button.component';
 import { LabelComponent } from '../../components/label/label.component';
+import { ButtonComponent } from '../../components/new/button/button.component';
 
 
 @Component({
   selector: 'app-auth',
-  imports: [CommonModule, ButtonComponent, LabelComponent],
+  imports: [CommonModule, ButtonComponent],
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.css',
 })

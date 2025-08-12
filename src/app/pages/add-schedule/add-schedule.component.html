@@ -1,137 +1,238 @@
-<div class="flex flex-col items-start gap-8 xl:gap-12 lg:px-20 xl:px-36 2xl:px-72 pt-8">
+<div class="min-h-dvh flex flex-col bg-white">
 
-  <div class="header w-full flex flex-col items-start gap-2">
-    <img src="logos/icon-512x512.png" priority class="xl:w-24 xl:h-24" alt="" width="72" height="72">
-    <span class="SF-Bold text-3xl xl:text-4xl tracking-tight text-text-main">Schedulr</span>
-  </div>
-
-  @switch (currentStep){
-    @case ('SemInfo'){
-  <div class="header flex flex-col gap-1 items-start">
-    <div (click)="goBack()" class="back-btn cursor-pointer cursor w-8 h-8 rounded-full flex items-center justify-center border border-input-border">
-      <span class="text-lg">←</span>
-    </div>
-
-    <div class="flex flex-col items-start">
-      <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Set up your semester.</span>
-      <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">Start by defining your semester dates and schedule name.</span>
-    </div>
-  </div>
-
-  <div class="flex w-full flex-col items-start gap-6">
-    <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Semester Information</span>
-
-    <form [formGroup]="form" (ngSubmit)="onSubmitFirstStep()" class="w-full flex flex-col gap-6">
-      <div formGroupName="semester" class="flex flex-col gap-4 w-full">
-        <app-input-regular
-          label="Semester Name"
-          placeholder="eg. Fall 2025 Semester"
-          formControlName="schedule_name"
-          [required]="true"
-          class="w-full"
-        ></app-input-regular>
-
-        <div class="w-full flex flex-col sm:grid sm:grid-cols-2 gap-4">
-          <!-- <app-input-regular
-            label="Start Date"
-            type="date"
-            formControlName="start_date"
-            [required]="true"
-            class="w-full"
-          ></app-input-regular> -->
-
-          <app-date-picker label="Start Date"
-            type="date"
-            formControlName="start_date"
-            [required]="true"
-            class="w-full">
-          </app-date-picker>
-
-          <div class="flex flex-col items-start">
-            <app-date-picker label="End Date"
-            type="date"
-            formControlName="end_date"
-            [required]="true"
-            class="w-full">
-            </app-date-picker>
-
-            <!-- Show error message for date range -->
-            @if (form.get('semester')?.hasError('dateRange')) {
-              <div class="text-red-500 SF-Regular tracking-tight text-sm mt-2">
-                End date must be after start date
-              </div>
-            }
-          </div>
-
+  <!-- Mobile header with progress -->
+  <div class="md:hidden sticky top-0 z-20 bg-white border-b border-gray-300 px-4 py-3">
+    <div class="flex items-center justify-center gap-2">
+          <img src="/icons/schedulr-logo-new.svg" width="32" height="32" alt="" class="rounded-md" />
+          <span class="font-bold text-xl text-text-main tracking-tight">Schedulr.</span>
         </div>
+    <!-- <div class="flex items-center justify-between">
+      <button type="button" (click)="prevStep()" [disabled]="currentStepIndex === 0"
+        class="px-3 py-1.5 border border-input-border rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
+        ← Back
+      </button>
+      <div class="flex items-center gap-2">
+        @for (s of steps; let i = $index; track i) {
+          <span [ngClass]="{
+                  'bg-brand-600 text-white': i === currentStepIndex,
+                  'bg-gray-200 text-gray-700': i !== currentStepIndex
+                }"
+                class="w-6 h-6 rounded-full text-xs flex items-center justify-center">
+            {{ i + 1 }}
+          </span>
+        }
       </div>
-
-      <app-button 
-        type="submit" 
-        [disabled]="form.get('semester')?.invalid" 
-        label="Continue to add classes" 
-        variant="secondary" 
-        class="mt-4 xl:text-xl w-full sm:w-auto">
-      </app-button>
-    </form>
+      <button type="button" (click)="nextStep()" [disabled]="currentStepIndex === steps.length - 1"
+        class="px-3 py-1.5 border border-input-border rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
+        Next →
+      </button>
+    </div>
+    <div class="mt-2 h-1.5 rounded-full bg-gray-100 overflow-hidden">
+      <div class="h-full bg-brand-600 transition-all" [style.width.%]="progressPercent"></div>
+    </div> -->
   </div>
+
+  <!-- Desktop layout -->
+  <div style="background-image: url('/images/doodle-3.png');" class="flex-1 bg-cover bg-center md:bg-none! flex justify-center md:grid md:grid-cols-5 xl:grid-cols-9 gap-8 p-16 md:p-4">
+    <!-- Stepper (left) -->
+  <aside style="background-image: url('/images/doodle-3.png');" class="hidden bg-cover bg-center col-span-2 xl:col-span-3 px-12 rounded-lg md:flex items-center">
+      <div class="sticky w-full top-6">
+        <div class="flex items-center gap-2 mb-6">
+          <img src="/icons/schedulr-logo-new.svg" width="32" height="32" alt="" class="rounded-md" />
+          <span class="font-bold text-xl text-text-main tracking-tight">Schedulr.</span>
+        </div>
+
+        <ol class="space-y-3">
+          @for (s of steps; let i = $index; track i) {
+            <li>
+              <button type="button" (click)="goToStep(s.key)"
+                class="w-full shadow-xs text-left p-3 border rounded-lg transition-colors"
+                [ngClass]="{
+                  'border-brand-600 bg-brand-50 text-brand-600': i === currentStepIndex,
+                  'border-gray-300 bg-gray-50': i !== currentStepIndex
+                }"
+                [attr.aria-current]="i === currentStepIndex ? 'step' : null">
+                <div class="flex items-center gap-3">
+                  <span class="w-7 h-7 rounded-full flex items-center justify-center text-sm"
+                        [ngClass]="{
+                          'bg-brand-600 text-white': i === currentStepIndex,
+                          'bg-gray-200 text-gray-700': i !== currentStepIndex
+                        }">
+                    {{ i + 1 }}
+                  </span>
+                  <div class="flex flex-col">
+                    <span class="font-semibold tracking-tight text-sm text-text-main">{{ s.label }}</span>
+                    @if (s.summary) {
+                      <span class="text-xs text-gray-800 tracking-tight opacity-70">{{ s.summary }}</span>
+                    }
+                  </div>
+                </div>
+              </button>
+            </li>
+          }
+        </ol>
+      </div>
+  </aside>
+
+ 
+  <main class="min-w-0 col-span-3 xl:col-span-6 flex items-center justify-center">
+    <div class="flex flex-col gap-8">
+
+    <span class="font-semibold text-base text-brand-600 tracking-tight">Step {{currentStepIndex + 1}} of {{steps.length}}</span>
+    @switch (currentStep){
+    @case ('SemInfo'){
+     <div class="header flex flex-col gap-1 items-start">
+       <!-- <div (click)="goBack()" class="back-btn cursor-pointer cursor w-8 h-8 rounded-full flex items-center justify-center border border-input-border">
+         <span class="text-lg">←</span>
+       </div> -->
+   
+       <div class="flex flex-col items-start">
+         <span class="text-gray-800 text-xl lg:text-2xl xl:text-3xl font-semibold tracking-tight">Set up your semester.</span>
+         <span class="text-gray-600 opacity-60 lg:text-xl font-medium tracking-tight">Start by defining your semester dates and schedule name.</span>
+       </div>
+     </div>
+   
+     <div class="flex w-full flex-col items-start gap-6">
+       <!-- <span class="text-text-main text-xl lg:text-2xl xl:text-3xl font-semibold tracking-tight">Semester Information</span> -->
+   
+       <form [formGroup]="form" (ngSubmit)="onSubmitFirstStep()" class="w-full flex flex-col gap-6">
+         <div formGroupName="semester" class="flex flex-col gap-4 w-full">
+           
+           <app-input-field-base formControlName="schedule_name" [required]="true" label="Semester Name" placeholder="eg. Fall 2025 Semester"></app-input-field-base>
+   
+           <div class="w-full flex flex-col sm:grid sm:grid-cols-2 gap-4">
+       
+             <app-date-picker label="Start Date"
+               type="date"
+               formControlName="start_date"
+               [required]="true"
+               class="w-full">
+             </app-date-picker>
+   
+             <div class="flex flex-col items-start">
+               <app-date-picker label="End Date"
+               type="date"
+               formControlName="end_date"
+               [required]="true"
+               class="w-full">
+               </app-date-picker>
+   
+               <!-- Show error message for date range -->
+               @if (form.get('semester')?.hasError('dateRange')) {
+                 <div class="text-red-500 font-regular tracking-tight text-sm mt-2">
+                   End date must be after start date
+                 </div>
+               }
+             </div>
+   
+           </div>
+         </div>
+   
+         <div class="grid grid-cols-2 gap-4">
+          <app-button [routerLink]="'/home'"
+           iconName="arrow-left" 
+           type="button" 
+           text="Back to home" 
+           hierarchy="tertiary">
+         </app-button>
+         <app-button 
+           type="submit" 
+           [disabled]="form.get('semester')?.invalid" 
+           text="Next" 
+           hierarchy="primary">
+         </app-button>
+
+         </div>
+
+       </form>
+     </div>
     }
     @case ('AddClasses'){
-       <div (click)="prevStep()" class="header flex flex-col gap-1 items-start">
-         <div class="back-btn cursor-pointer w-8 h-8 rounded-full flex items-center justify-center border border-input-border">
-           <span class="text-lg">←</span>
-         </div>
-     
+       <div class="header flex flex-col gap-1 items-start">
          <div class="flex flex-col items-start">
-           <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Set up your semester.</span>
-           <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">Start by defining your semester dates and schedule name.</span>
+           <span class="text-gray-800 text-xl lg:text-2xl xl:text-3xl font-semibold tracking-tight">Add your classes.</span>
+           <span class="text-gray-600 opacity-60 lg:text-xl font-medium max-w-4/5 tracking-tight">Enter course details, pick days and times, set room and color, then add each class.</span>
          </div>
       </div>
 
       <div class="flex w-full flex-col items-start gap-6">
-        <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Add New Class</span>
-
 
         <form [formGroup]="classForm" (ngSubmit)="addClass()" class="w-full flex flex-col gap-6">
           <div class="flex flex-col gap-4 w-full">
-            <app-input-regular
-              label="Course Title"
-              placeholder="eg. Calculus II"
-              formControlName="course_name"
-              [required]="true"
-            ></app-input-regular>
+            <app-input-field-base formControlName="course_name" [required]="true" label="Course Name" placeholder="eg. Calculus II"></app-input-field-base>
 
 
             <div class="input-group w-full flex flex-col items-start gap-2">
-              <span class="text-sm lg:text-base SF-Medium text-text-main tracking-tight">Days of Week</span>
+              <span class="text-sm font-medium text-gray-700 tracking-tight">Days of Week</span>
 
               <div class="flex flex-wrap gap-2">
                 @for (day of daysOfWeek; track $index) {
                   <span
                     (click)="toggleDay(day)"
                     [ngClass]="{
-                      'bg-secondary text-primary border-primary': isDaySelected(day),
-                      'border-input-border': !isDaySelected(day)
+                      'bg-brand-50 text-brand-600 border-brand-600': isDaySelected(day),
+                      'border-gray-300': !isDaySelected(day)
                     }"
-                    class='text-xs border cursor-pointer xl:text-sm SF-Medium tracking-tight px-3 py-1 rounded-full'>
+                    class='text-xs border cursor-pointer xl:text-sm font-medium shadow-xs tracking-tight px-3 py-1 rounded-full'>
                   {{day}}
                   </span>
                 }
               </div>
 
 
+              <!-- Consistency toolbar -->
+              <!-- <div class="w-full mt-2 rounded-lg border border-gray-300 bg-white p-3">
+                <div class="flex flex-col md:flex-row md:flex-wrap md:items-center md:justify-between gap-3">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-semiold text-gray-800 tracking-tight">Apply from</span>
+                    <select
+                      class="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white"
+                      [value]="sourceDayIndex"
+                      (change)="onChangeSourceIndex($any($event.target).value)">
+                      @for (dayGroup of days.controls; let i = $index; track i) {
+                        <option [value]="i">{{ dayGroup.get('day')?.value }}</option>
+                      }
+                    </select>
+                    <span class="text-sm text-gary-800 opacity-60">to all selected days</span>
+                  </div>
+              
+                  <div class="flex items-center gap-4">
+                    <label class="inline-flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox"
+                             class="w-4 h-4 rounded border-gray-300 text-gray-800 focus:ring-brand-600"
+                             [checked]="syncTimes"
+                             (change)="onToggleSyncTimes($any($event.target).checked)">
+                      <span class="text-sm font-medium text-gray-800 tracking-tight">Use same time</span>
+                    </label>
+              
+                    <label class="inline-flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox"
+                             class="w-4 h-4 rounded border-gray-300 text-gray-800 focus:ring-brand-600"
+                             [checked]="syncRooms"
+                             (change)="onToggleSyncRooms($any($event.target).checked)">
+                      <span class="text-sm font-medium text-gray-800 tracking-tight">Use same room</span>
+                    </label>
+              
+                    <app-button
+                      type="button"
+                      icon="false"
+                      (clicked)="applyConsistencyFromSource()"
+                      text="Apply now"
+                      hierarchy="secondary">
+                    </app-button>
+                  </div>
+                </div>
+              </div> -->
+
+
+              <!-- Day cards -->
+               
               <div formArrayName="days" class="w-full flex flex-col md:grid md:grid-cols-2 gap-4 mt-4">
                 @for (dayGroup of days.controls; track $index) {
-                  <div [formGroupName]="$index" class="p-6 border border-input-border rounded-lg flex flex-col gap-3">
-                    <span class="text-lg tracking-tight SF-Bold text-text-main">{{dayGroup.get('day')?.value}}</span>
+                  <div [formGroupName]="$index" class="p-5 border border-gray-300 shadow-xs rounded-lg flex flex-col gap-3 bg-white md:bg-gray-50/500">
+                    <span class="text-lg tracking-tight font-semibold text-gray-800">{{dayGroup.get('day')?.value}}</span>
                     <div class="flex w-full flex-col items-start gap-4">
                       <div class="w-full grid grid-cols-2 gap-8">
-                        <!-- <app-input-regular
-                        label="Start Time"
-                        type="time"
-                        formControlName="start_time"
-                        [required]="true"
-                        ></app-input-regular> -->
 
                         <app-time-picker
                           label="Start Time"
@@ -147,76 +248,24 @@
                           [required]="true">
                         </app-time-picker>
 
-                        <!-- <div class="flex w-full flex-col items-start">
-                          <app-time-picker
-                          label="End Time"
-                          placeholder_two="End at"
-                          formControlName="end_time"
-                          class="w-full"
-                          [required]="true">
-                        </app-time-picker>
-              
-                          @if (form.get('days')?.hasError('timeRange')) {
-                            <div class="text-red-500 SF-Regular tracking-tight text-sm mt-2">
-                              End time must be after start time
-                            </div>
-                          }
-                         </div> -->
-                        <!-- <app-input-regular
-                          label="End Time"
-                          type="time"
-                          formControlName="end_time"
-                          [required]="true"
-                        ></app-input-regular> -->
                       </div>
 
-                      <app-input-regular
-                        label="Room"
-                        class="w-full"
-                        placeholder="eg. Room 101"
-                        formControlName="room"
-                        [required]="false"
-                      ></app-input-regular>
+                      <app-input-field-base class="w-full" formControlName="room" label="Room" placeholder="eg. Room 101"></app-input-field-base>
+
                     </div>
-
-                    <!-- Consistency options (only show for days after the first) -->
-                    @if ($index > 0) {
-                      <div class="flex w-full flex-col gap-3 py-4 rounded-lg">
-                        <span class="text-sm lg:text-base SF-Bold text-primary tracking-tight">Consistency Options</span>
-                        
-                        <div class="flex flex-col gap-2">
-                          <label class="flex items-start gap-2 cursor-pointer">
-                            <input 
-                              type="checkbox" 
-                              (change)="copyTimeFromPrevious($index, $event)"
-                              class="w-4 h-4 text-primary mt-1 bg-gray-100 border-gray-300 rounded focus:ring-primary focus:ring-2"
-                            >
-                            <span class="text-sm lg:text-base SF-Medium text-text-main tracking-tight">Class time is the same as previous day</span>
-                          </label>
-                          
-                          <label class="flex items-start gap-2 cursor-pointer">
-                            <input 
-                              type="checkbox" 
-                              (change)="copyRoomFromPrevious($index, $event)"
-                              class="w-4 h-4 mt-1 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary focus:ring-2"
-                            >
-                            <span class="text-sm lg:text-base SF-Medium text-text-main tracking-tight">Room location is the same as previous day</span>
-                          </label>
-                        </div>
-                      </div>
-                    }
                   </div>
                 }
               </div>
+         
 
             </div>
 
             <div class="flex flex-col items-start gap-2 w-full">
-                <span class="text-sm lg:text-base SF-Medium text-text-main tracking-tight">Color</span>
+                <span class="text-sm font-regular text-gray-800 tracking-tight">Color</span>
 
                 <div class="w-full flex flex-wrap flex-shrink-0 items-center gap-3">
                   @for (color of colorArray; track $index) {
-                  <div (click)="toggleColor(color)" [ngClass]="{ 'ring-2 ring-offset-2 ring-gray-400': isColorSelected(color), 'hover:scale-110': true }" [style.backgroundColor]="color" class="w-10 h-10 border border-input-border rounded-full">
+                  <div (click)="toggleColor(color)" [ngClass]="{ 'ring-2 ring-offset-2 ring-brand-600': isColorSelected(color), 'hover:scale-110': true }" [style.backgroundColor]="color" class="w-10 h-10 border border-gray-300 shadow-xs rounded-full">
 
                   </div>
                 }
@@ -228,12 +277,21 @@
           </div>
 
 
-          <app-button type="submit" [disabled]="!classForm.valid" label="Add Class" variant="secondary" class="mt-4 xl:text-xl"></app-button>
-          <!-- @if (classForm.invalid && classForm.touched) {
-            <div class="text-red-500 text-sm mt-2">
-              Please fill in all required fields including at least one day with time and room information.
-            </div>
-          } -->
+          <!-- <app-button type="submit" [disabled]="!classForm.valid" text="Add Class" hierarchy="primary"></app-button> -->
+
+          <div class="grid grid-cols-2 gap-4">
+          <app-button (clicked)="prevStep()"
+           iconName="arrow-left" 
+           type="button" 
+           text="Back" 
+           hierarchy="tertiary">
+         </app-button>
+         <app-button 
+           type="submit" [disabled]="!classForm.valid" text="Add Class" hierarchy="primary">
+         </app-button>
+
+         </div>
+          
         </form>
 
 
@@ -280,10 +338,6 @@
     }
     @case ('PreviewSchedule'){
       <div (click)="prevStep()" class="header flex flex-col gap-1 items-start">
-
-        <div class="back-btn cursor-pointer w-8 h-8 rounded-full flex items-center justify-center border border-input-border">
-           <span class="text-lg">←</span>
-         </div>
 
          <div class="flex flex-col items-start">
           <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Preview your schedule.</span>
@@ -370,5 +424,8 @@
       </app-button>
     }
   }
+  </div>
+  </main>
+  </div>
 
 </div>

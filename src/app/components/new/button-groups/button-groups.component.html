@@ -1,0 +1,26 @@
+<div class="flex flex-col items-start gap-2">
+  <span class="text-gray-600">{{ label }}</span>
+
+  <div class="group-attached inline-flex items-stretch overflow-hidden border border-gray-300 shadow-xs rounded-lg">
+    <ng-content>
+      @for (item of buttons; track $index) {
+      <app-button
+        [type]="item?.type ?? type"
+        (clicked)="onItemClick($index, item, $event)"
+        [size]="item?.size ?? 'md'"
+        [hierarchy]="'tertiary-gray'"
+        [icon]="item?.icon ?? 'leading'"
+        [isDestructive]="item?.isDestructive ?? false"
+        [text]="item?.text ?? ''"
+        [iconName]="item?.iconName ?? null"
+        [iconStyle]="item?.iconStyle ?? null"
+        [disabled]="item?.disabled ?? false"
+        [loading]="item?.loading ?? false"
+        [name]="item?.name ?? 'action'"             
+        [value]="item?.value ?? item?.id ?? ''"
+        [isInGroup]="true"
+      ></app-button>
+      }
+    </ng-content>
+  </div>
+</div>

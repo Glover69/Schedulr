@@ -1,5 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
+
 
 html,
 body {
@@ -7,11 +9,13 @@ body {
   height: 100%;
   overflow-x: hidden;
   scroll-behavior: smooth;
+  font-family: var(--font-sans);
+  font-optical-sizing: auto;
 }
 
 /* SF */
 
-@font-face {
+/* @font-face {
   font-family: 'SF-Regular';
   src: url('/fonts/SF/SFPRODISPLAYREGULAR.OTF');
 }
@@ -37,10 +41,10 @@ body {
 
 .SF-Bold{
   font-family: 'SF-Bold';
-}
+} */
 
 
-@theme {
+/* @theme {
   --color-text-main: #33373D;
   --color-primary: #91059F;
   --color-secondary: #FDE6FF;
@@ -55,9 +59,7 @@ body {
   --color-card-foreground: oklch(0.145 0 0);
   --color-popover: oklch(1 0 0);
   --color-popover-foreground: oklch(0.145 0 0);
-  /* --color-primary: oklch(0.205 0 0); */
   --color-primary-foreground: oklch(0.985 0 0);
-  /* --color-secondary: oklch(0.97 0 0); */
   --color-secondary-foreground: oklch(0.205 0 0);
   --color-muted: oklch(0.97 0 0);
   --color-muted-foreground: oklch(0.556 0 0);
@@ -81,10 +83,10 @@ body {
   --color-sidebar-accent-foreground: oklch(0.205 0 0);
   --color-sidebar-border: oklch(0.922 0 0);
   --color-sidebar-ring: oklch(0.708 0 0);
-}
+} */
 
 
-:root {
+/* :root {
   --radius: 0.65rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -118,9 +120,9 @@ body {
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-}
+} */
 
-.dark {
+/* .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -152,7 +154,7 @@ body {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
-}
+} */
 
 /*input[type="date"] {*/
 /*  font-family: 'SF-Regular', sans-serif;*/
@@ -172,3 +174,218 @@ body {
 /*input[type="date"]::-webkit-datetime-edit-year-field {*/
 /*  color: #9ca3af;*/
 /*}*/
+
+
+
+
+
+@theme {
+
+  /* COLORS */
+  --color-brand-25: #fdf5fe;
+  --color-brand-50: #f9e6fc;
+  --color-brand-100: #f2ccf9;
+  --color-brand-200: #e699f3;
+  --color-brand-300: #d966ed;
+  --color-brand-400: #cc33e7;
+  --color-brand-500: #a50db3;
+  --color-brand-600: #91059f;
+  --color-brand-700: #7a0486;
+  --color-brand-800: #5d0266;
+  --color-brand-900: #3f0145;
+
+  /* Gray Color Variants */
+  --color-gray-50: #F9FAFB;
+  --color-gray-100: #F2F4F7;
+  --color-gray-200: #EAECF0;
+  --color-gray-300: #D0D5DD;
+  --color-gray-400: #98A2B3;
+  --color-gray-500: #667085;
+  --color-gray-600: #475467;
+  --color-gray-700: #344054;
+  --color-gray-800: #1D2939;
+  --color-gray-900: #101828;
+
+  /* Error color variants */
+  --color-error-50: #FEF3F2;
+  --color-error-100: #FEE4E2;
+  --color-error-300: #FDA29B;
+  --color-error-500: #F04438;
+  --color-error-700: #B42318;
+
+  /* Warning color variants */
+  --color-warning-50: #FFFAEB;
+  --color-warning-100: #FEF0C7;
+  --color-warning-500: #F79009;
+  --color-warning-700: #B54708;
+
+  /* Success color variants */
+  --color-success-50: #ECFDF3;
+  --color-success-100: #D1FADF;
+  --color-success-500: #12B76A;
+  --color-success-700: #027A48;
+
+
+  /* FONTS */
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* SHADOWS */
+  --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(16, 24, 40, 0.10), 0 1px 2px 0 rgba(16, 24, 40, 0.06);
+  --shadow-md: 0 4px 8px -2px rgba(16, 24, 40, 0.10), 0 2px 4px -2px rgba(16, 24, 40, 0.06);
+  --shadow-lg: 0 12px 16px -4px rgba(16, 24, 40, 0.08), 0 4px 6px -2px rgba(16, 24, 40, 0.03);
+  --shadow-xl: 0 20px 24px -4px rgba(16, 24, 40, 0.08), 0 8px 8px -4px rgba(16, 24, 40, 0.03);
+  --shadow-2xl: 0 24px 48px -12px rgba(16, 24, 40, 0.18);
+  --shadow-3xl: 0 32px 64px -12px rgba(16, 24, 40, 0.14);
+
+  /* SCREEN BREAKPOINTS */
+  --breakpoint-xs: 375px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1440px;
+  --breakpoint-3xl: 1650px;
+
+  /* Z-INDEX */
+  /* z-0 → base
+  z-10 → dropdowns
+  z-20 → modals
+  z-30 → popovers/tooltips
+  z-40 → toasts
+  z-50 → always-on-top */
+
+}
+
+
+
+:root {
+  /* Brand color variants */
+  --color-brand-25: #fdf5fe;
+  --color-brand-50: #f9e6fc;
+  --color-brand-100: #f2ccf9;
+  --color-brand-200: #e699f3;
+  --color-brand-300: #d966ed;
+  --color-brand-400: #cc33e7;
+  --color-brand-500: #a50db3;
+  --color-brand-600: #91059f;
+  --color-brand-700: #7a0486;
+  --color-brand-800: #5d0266;
+  --color-brand-900: #3f0145;
+
+  /* Gray Color Variants */
+  --color-gray-50: #F9FAFB;
+  --color-gray-100: #F2F4F7;
+  --color-gray-200: #EAECF0;
+  --color-gray-300: #D0D5DD;
+  --color-gray-400: #98A2B3;
+  --color-gray-500: #667085;
+  --color-gray-600: #475467;
+  --color-gray-700: #344054;
+  --color-gray-800: #1D2939;
+  --color-gray-900: #101828;
+
+  /* Error color variants */
+  --color-error-50: #FEF3F2;
+  --color-error-100: #FEE4E2;
+  --color-error-300: #FDA29B;
+  --color-error-500: #F04438;
+  --color-error-700: #B42318;
+
+  /* Warning color variants */
+  --color-warning-50: #FFFAEB;
+  --color-warning-100: #FEF0C7;
+  --color-warning-500: #F79009;
+  --color-warning-700: #B54708;
+
+  /* Success color variants */
+  --color-success-50: #ECFDF3;
+  --color-success-100: #D1FADF;
+  --color-success-500: #12B76A;
+  --color-success-700: #027A48;
+}
+
+
+@layer components {
+  /* 4px focus rings */
+  .focus-ring-primary-100:focus-visible { @apply outline-none ring-4 ring-brand-100; }
+  .focus-ring-primary-600:focus-visible { @apply outline-none ring-4 ring-brand-600; }
+  .focus-ring-gray-100:focus-visible    { @apply outline-none ring-4 ring-gray-100; }
+  .focus-ring-gray-600:focus-visible    { @apply outline-none ring-4 ring-gray-600; }
+  .focus-ring-error-100:focus-visible   { @apply outline-none ring-4 ring-error-100; }
+}
+
+@layer components {
+  /* Base */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg font-medium
+           transition-colors disabled:cursor-not-allowed
+           focus-visible:outline-none focus-visible:ring-4;
+  }
+
+  /* Sizes */
+  .btn-sm { @apply px-3.5 py-2 text-sm; }
+  .btn-md { @apply px-4 py-2.5 text-sm; }
+  .btn-lg { @apply px-4.5 py-2.5 text-base; }
+  .btn-xl { @apply px-5 py-3 text-base; }
+  .btn-2xl { @apply px-7 py-4 text-lg; }
+
+  /* Variants (hierarchies) */
+  .btn-primary {
+    @apply bg-brand-600 shadow-xs text-white hover:bg-brand-700 disabled:bg-brand-100
+           focus-visible:ring-brand-600;
+  }
+  .btn-secondary {
+    @apply bg-brand-50 shadow-xs text-brand-700 hover:bg-brand-100 disabled:bg-brand-25 disabled:text-brand-300
+           focus-visible:ring-brand-100;
+  }
+
+  .btn-secondary-gray {
+    @apply bg-white shadow-xs text-gray-700 border border-gray-300 hover:bg-gray-50 hover:text-gray-800 disabled:bg-white disabled:border-gray-200 disabled:text-gray-300
+           focus-visible:ring-gray-100;
+  }
+
+  .btn-tertiary {
+    @apply bg-transparent text-brand-700 hover:bg-brand-50 disabled:text-gray-300;
+  }
+
+  .btn-tertiary-gray {
+    @apply bg-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-700 disabled:text-gray-300;
+  }
+
+  .btn-link-color {
+    @apply p-0! bg-transparent text-brand-700 hover:text-brand-800 disabled:text-gray-300;
+  }
+
+  .btn-link-gray {
+    @apply p-0! bg-transparent text-gray-600 hover:text-gray-700 disabled:text-gray-300;
+  }
+
+  .btn-destructive {
+    @apply bg-error-300 text-white hover:bg-error-700 disabled:bg-error-100
+           focus-visible:ring-error-100;
+  }
+
+  /* State helpers */
+  .btn-loading { @apply pointer-events-none opacity-60; }
+}
+
+/* Global styles (e.g., styles.css) */
+.mask-fade-b {
+  -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
+}
+.mask-fade-t {
+  -webkit-mask-image: linear-gradient(to top, #000 70%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 70%, transparent 100%);
+}
+.mask-fade-x {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 20%, #000 80%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 20%, #000 80%, transparent 100%);
+}
+
+@layer components {
+  [card-title] { @apply text-gray-900 font-semibold leading-none; }
+  [card-description] { @apply text-gray-600 text-sm; }
+}
