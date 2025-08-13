@@ -5,7 +5,6 @@ import {
 } from '../../../services/google-auth.service';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../environments/environment';
-import { LabelComponent } from '../../components/label/label.component';
 import { ButtonComponent } from '../../components/new/button/button.component';
 
 
@@ -20,7 +19,7 @@ export class AuthComponent implements AfterViewInit {
   clientId = environment.googleClientId
   user: GoogleUser | null = null;
   isLoading = false;
-  loginUri = 'http://localhost:2005/api/schedulr/google-auth/auth-callback';
+  loginUri = `${environment.apiBase}/api/schedulr/google-auth/auth-callback`;
 
   constructor(
     private googleAuthService: GoogleAuthService
