@@ -8,7 +8,7 @@
         </div>
     <!-- <div class="flex items-center justify-between">
       <button type="button" (click)="prevStep()" [disabled]="currentStepIndex === 0"
-        class="px-3 py-1.5 border border-input-border rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
+        class="px-3 py-1.5 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
         ← Back
       </button>
       <div class="flex items-center gap-2">
@@ -23,7 +23,7 @@
         }
       </div>
       <button type="button" (click)="nextStep()" [disabled]="currentStepIndex === steps.length - 1"
-        class="px-3 py-1.5 border border-input-border rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
+        class="px-3 py-1.5 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
         Next →
       </button>
     </div>
@@ -33,7 +33,7 @@
   </div>
 
   <!-- Desktop layout -->
-  <div style="background-image: url('/images/doodle-3.png');" class="flex-1 bg-cover bg-center md:bg-none! flex justify-center md:grid md:grid-cols-5 xl:grid-cols-9 gap-8 p-16 md:p-4">
+  <div  class="flex-1 bg-cover bg-center md:bg-none! flex justify-center md:grid md:grid-cols-5 xl:grid-cols-9 gap-8 p-8 md:p-4">
     <!-- Stepper (left) -->
   <aside style="background-image: url('/images/doodle-3.png');" class="hidden bg-cover bg-center col-span-2 xl:col-span-3 px-12 rounded-lg md:flex items-center">
       <div class="sticky w-full top-6">
@@ -76,13 +76,13 @@
 
  
   <main class="min-w-0 col-span-3 xl:col-span-6 flex items-center justify-center">
-    <div class="flex flex-col gap-8">
+    <div class="flex flex-col gap-8 md:max-w-4/5 xl:max-w-3/5">
 
     <span class="font-semibold text-base text-brand-600 tracking-tight">Step {{currentStepIndex + 1}} of {{steps.length}}</span>
     @switch (currentStep){
     @case ('SemInfo'){
      <div class="header flex flex-col gap-1 items-start">
-       <!-- <div (click)="goBack()" class="back-btn cursor-pointer cursor w-8 h-8 rounded-full flex items-center justify-center border border-input-border">
+       <!-- <div (click)="goBack()" class="back-btn cursor-pointer cursor w-8 h-8 rounded-full flex items-center justify-center border border-gray-300">
          <span class="text-lg">←</span>
        </div> -->
    
@@ -168,7 +168,7 @@
               <div class="flex flex-wrap gap-2">
                 @for (day of daysOfWeek; track $index) {
                   <span
-                    (click)="toggleDay(day)"
+                    (click)="openDayDrawer(day)"
                     [ngClass]="{
                       'bg-brand-50 text-brand-600 border-brand-600': isDaySelected(day),
                       'border-gray-300': !isDaySelected(day)
@@ -178,6 +178,10 @@
                   </span>
                 }
               </div>
+
+              <!-- Microcards under chips -->
+               
+
 
 
               <!-- Consistency toolbar -->
@@ -226,8 +230,12 @@
 
 
               <!-- Day cards -->
+
+              <!-- <button class="btn btn-primary" (click)="drawerOpen = true">Open drawer</button> -->
+
                
-              <div formArrayName="days" class="w-full flex flex-col md:grid md:grid-cols-2 gap-4 mt-4">
+               
+              <!-- <div formArrayName="days" class="w-full flex flex-col md:grid md:grid-cols-2 gap-4 mt-4">
                 @for (dayGroup of days.controls; track $index) {
                   <div [formGroupName]="$index" class="p-5 border border-gray-300 shadow-xs rounded-lg flex flex-col gap-3 bg-white md:bg-gray-50/500">
                     <span class="text-lg tracking-tight font-semibold text-gray-800">{{dayGroup.get('day')?.value}}</span>
@@ -255,10 +263,60 @@
                     </div>
                   </div>
                 }
-              </div>
+              </div> -->
          
 
             </div>
+
+            @if (days.length >= 1) {
+              <div class="microchips-strip px-1 overflow-x-auto scrollbar-none mask-edge-fade">
+                <div class="inline-flex items-center gap-2">
+                  @for (day of daysOfWeek; track day) {
+                    @for (entry of getDayEntries(day); track entry.index) {
+                      <div class="inline-flex items-center gap-2 shrink-0 px-3 py-1 rounded-full border border-gray-300 bg-white shadow-xs">
+                        <span class="text-xs font-medium text-gray-700">{{ day }}</span>
+                        <span class="text-xs text-gray-800">· {{ entry.value.start_time }} – {{ entry.value.end_time }}</span>
+                        @if (entry.value.room) {
+                          <span class="text-xs text-gray-600">· {{ entry.value.room }}</span>
+                        }
+                        <button type="button"
+                                class="inline-flex items-center justify-center text-brand-600 hover:text-brand-700"
+                                (click)="openDayDrawer(day, entry.index)">
+                          <i class="ph ph-pencil text-[14px]"></i>
+                        </button>
+                        <button type="button"
+                                class="inline-flex items-center justify-center text-error-500 hover:text-error-700"
+                                (click)="removeDayEntry(entry.index)">
+                          <i class="ph ph-trash-simple text-[14px]"></i>
+                        </button>
+                      </div>
+                    }
+                  }
+                </div>
+              </div>
+            }
+
+
+               <app-drawer [(open)]="drawerOpen">
+                <form [formGroup]="dayEntryForm" (ngSubmit)="saveDayEntry()" class="p-6 flex flex-col gap-4 w-full">
+                 <div class="flex items-center justify-between">
+                   <span class="text-xl font-semibold text-gray-800 tracking-tight">Add time for {{ activeDay }}</span>
+                   <button type="button" class="text-sm text-gray-500 hover:text-gray-700" (click)="drawerOpen = false">Close</button>
+                 </div>
+             
+                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                   <app-time-picker [fullWidth]="true" label="Start Time" placeholder_two="Start Time" formControlName="start_time" [required]="true"></app-time-picker>
+                   <app-time-picker [fullWidth]="true" label="End Time" placeholder_two="End Time" formControlName="end_time" [required]="true"></app-time-picker>
+                 </div>
+             
+                 <app-input-field-base formControlName="room" label="Room" placeholder="eg. Room 101"></app-input-field-base>
+             
+                 <div class="flex items-center justify-end gap-3">
+                   <app-button type="button" iconName="x" hierarchy="tertiary" text="Cancel" (clicked)="drawerOpen = false"></app-button>
+                   <app-button [disabled]="!this.dayEntryForm.valid" type="submit" iconName="plus" hierarchy="primary" text="{{ editingIndex != null ? 'Save changes' : 'Add time' }}"></app-button>
+                 </div>
+               </form>
+               </app-drawer>
 
             <div class="flex flex-col items-start gap-2 w-full">
                 <span class="text-sm font-regular text-gray-800 tracking-tight">Color</span>
@@ -296,9 +354,11 @@
 
 
         @if (classes.length > 0) {
-          <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Added Classes ({{classes.value.length}})</span>
+          <!-- <span class="text-gray-800 font-semibold tracking-tight">Added Classes ({{classes.value.length}})</span> -->
 
-          <div class="flex w-full xl:grid xl:grid-cols-2 flex-col items-start gap-6">
+          <app-button iconName="eyes" hierarchy="link-color" text="View Added Classes ({{classes.value.length}})"></app-button>
+
+          <!-- <div class="flex w-full xl:grid xl:grid-cols-2 flex-col items-start gap-6">
             @for (item of classes.value; track $index) {
               <div [style.backgroundColor]="item.color_light" class="single-class relative w-full items-stretch flex  gap-4 rounded-xl p-5">
                 <div [style.backgroundColor]="item.color" class="w-4 flex-shrink-0 rounded-lg"></div>
@@ -329,8 +389,8 @@
               </div>
             }
 
-          </div>
-          <app-button type="submit" (click)="onSubmitSecondStep()" [disabled]="classes.length == 0" label="Proceed to Preview" variant="secondary" class="mt-4 xl:text-xl"></app-button>
+          </div> -->
+          <!-- <app-button type="submit" (click)="onSubmitSecondStep()" [disabled]="classes.length == 0" label="Proceed to Preview" variant="secondary" class="mt-4 xl:text-xl"></app-button> -->
         }
 
 
@@ -340,28 +400,28 @@
       <div (click)="prevStep()" class="header flex flex-col gap-1 items-start">
 
          <div class="flex flex-col items-start">
-          <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Preview your schedule.</span>
-        <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">Review your complete schedule before saving.</span>
+          <span class="text-gray-800 text-xl lg:text-2xl xl:text-3xl font-semibold tracking-tight">Preview your schedule.</span>
+          <span class="text-gray-600 opacity-60 lg:text-xl fomt-medium tracking-tight">Review your complete schedule before saving.</span>
          </div>
 
       </div>
 
       <div class="flex flex-col items-start gap-5 w-full">
            <div class="header flex flex-col items-start">
-             <span class="text-text-main text-xl lg:text-2xl xl:text-3xl SF-Bold tracking-tight">Schedule Preview</span>
-             <span class="text-text-main opacity-60 lg:text-xl xl:text-2xl SF-Medium tracking-tight">{{getCompleteSchedulePayload().semester.schedule_name}}</span>
+             <span class="text-gray-800 text-xl lg:text-2xl font-semibold tracking-tight">Schedule Preview</span>
+             <span class="text-gray-600 opacity-60 lg:text-xl font-medium tracking-tight">{{getCompleteSchedulePayload().semester.schedule_name}}</span>
            </div>
 
            <!-- Day Navigation -->
-           <div class="day-navigation flex items-center justify-between w-full max-w-sm bg-white border border-input-border rounded-lg p-1">
+           <div class="day-navigation flex items-center justify-between w-full max-w-sm bg-white border border-gray-300 rounded-lg p-1">
              <button 
                (click)="previousDay()" 
                [disabled]="currentDayIndex === 0"
                class="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
-               <span class="text-base">←</span>
+               <span class="text-base ph ph-arrow-left"></span>
              </button>
              
-             <span class="text-lg SF-Bold text-text-main px-4">
+             <span class="text-lg tracking-tight fomt-semibold text-gray-800 px-4">
                {{ getCurrentDayName() }}
              </span>
              
@@ -369,12 +429,12 @@
                (click)="nextDay()" 
                [disabled]="currentDayIndex === availableDays.length - 1"
                class="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
-               <span class="text-base">→</span>
+               <span class="text-base ph ph-arrow-right"></span>
              </button>
            </div>
 
           <!-- Schedule Grid -->
-         <div class="schedule-grid w-full bg-white border border-input-border rounded-lg overflow-hidden">
+         <div class="schedule-grid w-full bg-white border border-gray-300 rounded-lg overflow-scroll h-[30rem]">
            <!-- Grid container with CSS Grid -->
            <div class="grid grid-cols-[100px_1fr] bg-white">
              
@@ -397,8 +457,8 @@
                      [style.border-left-color]="event.color">
                      
                      <div class="flex flex-col">
-                       <span class="text-sm xl:text-base SF-Bold text-text-main">{{ event.course_name }}</span>
-                       <span class="text-xs xl:text-sm SF-Regular text-text-main opacity-70">
+                       <span class="text-sm xl:text-base font-semibold text-gray-800 tracking-tight">{{ event.course_name }}</span>
+                       <span class="text-xs xl:text-sm font-regular text-gray-600 opacity-60 tracking-tight">
                          {{ event.start_time }} - {{ event.end_time }}
                        </span>
                        <!-- <span class="text-xs xl:text-sm SF-Regular text-text-main opacity-70">
@@ -415,13 +475,22 @@
 
       </div>
 
-      <app-button 
+      <div class="grid grid-cols-2 gap-4">
+        <app-button (clicked)="prevStep()"
+           iconName="arrow-left" 
+           type="button" 
+           text="Back" 
+           hierarchy="tertiary">
+         </app-button>
+        <app-button 
         (click)="finalizeSchedule()"
         type="submit" 
-        label="Save and Download Schedule" 
-        variant="secondary" 
+        text="Save Schedule" 
+        hierarchy="primary" 
         class="w-full">
       </app-button>
+      </div>
+      
     }
   }
   </div>

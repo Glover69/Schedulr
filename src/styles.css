@@ -1,11 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
+ 
+@media (max-width: 767px) {
+*{
+  max-width: 100% !important;
+}  
+}
 
 
 html,
 body {
-  max-width: 100%;
+  max-width: 100% !important;
   height: 100%;
   overflow-x: hidden;
   scroll-behavior: smooth;

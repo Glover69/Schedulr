@@ -31,6 +31,7 @@ export class TimePickerComponent implements ControlValueAccessor {
   @Input() placeholder: string = 'Select time';
   @Input() required: boolean = false;
   @Input() placeholder_two: string = '';
+  @Input() fullWidth: boolean = false
   @ViewChild('drawer', { static: false }) drawerRef!: ElementRef;
 
   value: string = '';

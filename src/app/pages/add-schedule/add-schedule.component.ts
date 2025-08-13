@@ -20,10 +20,21 @@ import { InputFieldBaseComponent } from '../../components/new/input-field-base/i
 import { DatePickerComponent } from '../../components/new/date-picker/date-picker.component';
 import { ButtonComponent } from '../../components/new/button/button.component';
 import { TimePickerComponent } from '../../components/new/time-picker/time-picker.component';
-import { DrawerComponent } from "../../components/new/drawer/drawer.component";
+import { DrawerComponent } from '../../components/new/drawer/drawer.component';
 
 export type StepKey = 'SemInfo' | 'AddClasses' | 'PreviewSchedule';
 export type StepStatus = 'done' | 'current' | 'todo';
+type PreviewEvent = {
+  id: string;
+  course_name: string;
+  start_time: string;
+  end_time: string;
+  room?: string;
+  color: string;
+  color_light: string;
+  topOffset: number;
+  height: number;
+};
 
 @Component({
   selector: 'app-add-schedule',
@@ -34,8 +45,8 @@ export type StepStatus = 'done' | 'current' | 'todo';
     DatePickerComponent,
     TimePickerComponent,
     InputFieldBaseComponent,
-    DrawerComponent
-],
+    DrawerComponent,
+  ],
   templateUrl: './add-schedule.component.html',
   styleUrl: './add-schedule.component.css',
 })
@@ -70,9 +81,13 @@ export class AddScheduleComponent implements OnInit {
   isEditMode = false;
   scheduleID: any;
 
-  
   form: FormGroup;
   classForm: FormGroup;
+  dayEntryForm: FormGroup;
+
+  drawerOpen: boolean = false;
+  activeDay: string | null = null;
+  editingIndex: number | null = null;
 
   sourceDayIndex = 0;
   syncTimes = false;
@@ -103,6 +118,13 @@ export class AddScheduleComponent implements OnInit {
       color: ['', Validators.required],
       color_light: ['', Validators.required],
       days: this.fb.array([]),
+    });
+
+    this.dayEntryForm = this.fb.group({
+      day: [''],
+      start_time: ['', Validators.required],
+      end_time: ['', Validators.required],
+      room: ['']
     });
   }
 
@@ -199,10 +221,77 @@ export class AddScheduleComponent implements OnInit {
     return this.classForm.get('days') as FormArray;
   }
 
-  drawerOpen: boolean = false
+  openDayDrawer(day: string, editIndex?: number) {
+    console.log(day, editIndex)
+    this.activeDay = day;
+    this.editingIndex = editIndex ?? null;
+
+    if (editIndex != null) {
+      const v = this.days.at(editIndex).value;
+      this.dayEntryForm.reset({
+        day: v.day,
+        start_time: v.start_time,
+        end_time: v.end_time,
+        room: v.room ?? ''
+      });
+    } else {
+      this.dayEntryForm.reset({
+        day,
+        start_time: '',
+        end_time: '',
+        room: ''
+      });
+    }
+
+    this.drawerOpen = true;
+  }
+
+  saveDayEntry() {
+    if (this.dayEntryForm.invalid) return;
+
+    const payload = this.dayEntryForm.value;
+
+    // Optional: simple time validation (start < end)
+    const toMins = (t: string) => {
+      const m = t.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+      if (!m) return 0;
+      let h = +m[1]; const min = +m[2]; const ap = m[3]?.toUpperCase();
+      if (ap === 'AM' && h === 12) h = 0;
+      if (ap === 'PM' && h < 12) h += 12;
+      return h * 60 + min;
+    };
+    if (toMins(payload.start_time) >= toMins(payload.end_time)) return;
+
+    if (this.editingIndex != null) {
+      this.days.at(this.editingIndex).patchValue(payload);
+    } else {
+      this.days.push(this.fb.group(payload));
+    }
+
+    this.drawerOpen = false;
+    this.activeDay = null;
+    this.editingIndex = null;
+  }
+
+  removeDayEntry(index: number) {
+    this.days.removeAt(index);
+  }
+
+  // Used by template to render microcards with their original indices
+  getDayEntries(day: string): { index: number; value: any }[] {
+    return this.days.controls
+      .map((ctrl, idx) => ({ index: idx, value: ctrl.value }))
+      .filter(e => e.value.day === day);
+  }
+
+  isDaySelected(day: string): boolean {
+    return this.getDayEntries(day).length > 0;
+  }
+
+  
   // Methods to manage days in classForm
   toggleDay(day: string) {
-    this.drawerOpen = true
+    this.drawerOpen = true;
     const dayIndex = this.days.controls.findIndex(
       (control) => control.value.day === day
     );
@@ -216,9 +305,9 @@ export class AddScheduleComponent implements OnInit {
     }
   }
 
-  isDaySelected(day: string): boolean {
-    return this.days.controls.some((control) => control.value.day === day);
-  }
+  // isDaySelected(day: string): boolean {
+  //   return this.days.controls.some((control) => control.value.day === day);
+  // }
 
   // Methods to manage days in classForm
   addDay(day: string) {
@@ -438,6 +527,57 @@ export class AddScheduleComponent implements OnInit {
       this.currentDayIndex++;
     }
   }
+
+  private toMinutes(time: string): number {
+    // Accepts "HH:mm" or "h:mm AM/PM"
+    if (!time) return 0;
+    const m = time.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+    if (!m) return 0;
+    let h = parseInt(m[1], 10);
+    const mins = parseInt(m[2], 10);
+    const ap = m[3]?.toUpperCase();
+    if (ap === 'AM' && h === 12) h = 0;
+    if (ap === 'PM' && h < 12) h += 12;
+    return h * 60 + mins;
+  }
+
+  // Returns events overlapping the [hour, hour+1) slot for a given day
+getEventsForDayAndTimeSlot(dayName: string, hour: number): PreviewEvent[] {
+  const slotStart = hour * 60;
+  const slotEnd = slotStart + 60;
+
+  const items = (this.classes?.value ?? []) as any[];
+  const out: PreviewEvent[] = [];
+
+  for (const cls of items) {
+    const course = cls.course_name;
+    const color = cls.color;
+    const color_light = cls.color_light ?? (cls.color_light || '#EEF2FF');
+
+    for (const d of cls.days ?? []) {
+      if (d.day !== dayName) continue;
+
+      const start = this.toMinutes(d.start_time);
+      const end = this.toMinutes(d.end_time);
+      const overlapStart = Math.max(start, slotStart);
+      const overlapEnd = Math.min(end, slotEnd);
+      if (overlapEnd <= overlapStart) continue;
+
+      out.push({
+        id: `${course}-${dayName}-${start}-${end}`,
+        course_name: course,
+        start_time: d.start_time,
+        end_time: d.end_time,
+        room: d.room,
+        color,
+        color_light,
+        topOffset: overlapStart - slotStart, // 1px per minute (hour = 60px tall)
+        height: overlapEnd - overlapStart,
+      });
+    }
+  }
+  return out;
+}
 
   // Get events for a specific time slot
   getEventsForTimeSlot(hour: number) {
