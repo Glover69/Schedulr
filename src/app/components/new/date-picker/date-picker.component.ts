@@ -31,6 +31,7 @@ export class DatePickerComponent implements ControlValueAccessor {
   @Input() label: string = '';
   @Input() placeholder: string = 'Select a date';
   @Input() required: boolean = false;
+  @Input() fullWidth: boolean = false
   @ViewChild('drawer', { static: false }) drawerRef!: ElementRef;
 
   value: string = '';

@@ -1,0 +1,12 @@
+@if (isOpen) {
+  <!-- Backdrop -->
+  <div 
+    (click)="closeSheet()"
+    class="fixed inset-0 bg-[#00000060] z-40">
+  </div>
+  
+  <!-- sheet -->
+  <div #sheet class="sheet w-3/4 sm:max-w-sm fixed top-0 right-0 z-50 bg-white h-dvh flex flex-col border-l border-gray-300 lg:items-center">
+   <ng-content></ng-content>
+  </div>
+}
