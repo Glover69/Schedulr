@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/schedulr/google-auth/callback",
+      "destination": "https://centralbackend-zkz2.onrender.com/api/schedulr/google-auth/auth-callback"
+    }
+  ]
+}
