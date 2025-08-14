@@ -19,7 +19,10 @@ export class AuthComponent implements AfterViewInit {
   clientId = environment.googleClientId
   user: GoogleUser | null = null;
   isLoading = false;
-  loginUri = `${environment.apiBase}/api/schedulr/google-auth/auth-callback`;
+  // loginUri = `${environment.apiBase}/api/schedulr/google-auth/auth-callback`;
+  // loginUri = '/api/schedulr/google-auth/auth-callback';
+  // loginUri = `${window.location.origin}/api/schedulr/google-auth/callback`;
+  
 
   constructor(
     private googleAuthService: GoogleAuthService
@@ -27,7 +30,7 @@ export class AuthComponent implements AfterViewInit {
   }
 
   async ngAfterViewInit() {
-    await this.googleAuthService.initRedirectMode(this.clientId, this.loginUri);
+    await this.googleAuthService.initRedirectMode(this.clientId);
     if (this.googleBtnOverlay?.nativeElement) {
       this.googleAuthService.renderRedirectButton(this.googleBtnOverlay.nativeElement);
     }

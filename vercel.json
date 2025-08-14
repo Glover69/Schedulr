@@ -1,8 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/api/schedulr/google-auth/callback",
-      "destination": "https://centralbackend-zkz2.onrender.com/api/schedulr/google-auth/auth-callback"
-    }
+      "source": "/api:path*",
+      "destination": "https://centralbackend-zkz2.onrender.com/api/:path*"
+    },
+    {
+        "source": "/((?!api/).*)",
+        "destination": "/index.html"
+      }
   ]
 }

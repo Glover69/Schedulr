@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 declare const google: any;
 
 export interface GoogleUser {
-  id: string;
+  uid: string;
   email: string;
   name: string;
   picture: string;
@@ -23,6 +23,7 @@ export class GoogleAuthService {
   private initialized = false;
   private scriptLoaded = false;
   private hydrated = false;
+  private apiUrl = environment.apiRoute
 
   constructor(private http: HttpClient) {}
 
@@ -38,7 +39,7 @@ export class GoogleAuthService {
     });
   }
 
-  async initRedirectMode(clientId: string, loginUri: string) {
+  async initRedirectMode(clientId: string,) {
     if (!this.scriptLoaded) {
       await this.loadGisScript();
       this.scriptLoaded = true;
@@ -48,7 +49,7 @@ export class GoogleAuthService {
     google.accounts.id.initialize({
       client_id: clientId,
       ux_mode: 'redirect',
-      login_uri: loginUri,
+      login_uri: `${window.location.origin}/api/schedulr/google-auth/auth-callback`,
       auto_select: false,
       cancel_on_tap_outside: true,
     });
@@ -72,9 +73,11 @@ export class GoogleAuthService {
     if (this.hydrated) return;
     try {
       const res = await firstValueFrom(
-        this.http.get<{ user: GoogleUser }>(`${environment.apiBase}/api/schedulr/google-auth/me`, { withCredentials: true })
+        this.http.get<{ user: GoogleUser }>(`${this.apiUrl}/schedulr/google-auth/me`, { withCredentials: true })
       );
+      console.log(res)
       this.userSubject.next(res?.user ?? null);
+      console.log(await firstValueFrom(this.user$))
     } catch {
       this.userSubject.next(null);
     } finally {
@@ -88,10 +91,15 @@ export class GoogleAuthService {
     await this.hydrate();
   }
 
+  getCurrentUser(): GoogleUser | null {
+    console.log(this.userSubject.value)
+    return this.userSubject.value;
+  }
+
   // Optional: if you add a backend logout route, call it here and clear local state
   async logout(): Promise<void> {
     try {
-      await fetch(`${environment.apiBase}/api/schedulr/logout`, {
+      await fetch(`${this.apiUrl}/schedulr/logout`, {
         method: 'POST',
         credentials: 'include',
       });

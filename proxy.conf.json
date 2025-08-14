@@ -1,0 +1,11 @@
+{
+    "/api/**": {
+        "target": "https://centralbackend-zkz2.onrender.com/api",
+        "secure": false,
+        "changeOrigin": true,
+        "pathRewrite": {
+            "^/api": ""
+        },
+        "logLevel": "debug"
+    }
+}

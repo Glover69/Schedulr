@@ -8,12 +8,13 @@ import { Schedule } from '../models/data.models';
   providedIn: 'root'
 })
 export class SchedulesService {
+  private apiUrl = environment.apiRoute
 
   constructor(private http: HttpClient) {}
 
   listMine(): Observable<{ schedules: Schedule[] }> {
     return this.http.get<{ schedules: Schedule[] }>(
-      `${environment.apiBase}/api/schedulr/user/get-data`,
+      `${this.apiUrl}/schedulr/user/get-data`,
       { withCredentials: true }
     );
   }
