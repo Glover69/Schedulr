@@ -24,6 +24,6 @@ export const routes: Routes = [
     component: AddScheduleComponent,
     canActivate: [AuthGuard]
   },
-  { path: '', redirectTo: '/auth', pathMatch: 'full' },
-  { path: '**', redirectTo: '/auth' }
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: '**', redirectTo: '/home' }
 ];

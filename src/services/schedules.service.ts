@@ -18,4 +18,12 @@ export class SchedulesService {
       { withCredentials: true }
     );
   }
+
+  createSchedule(userId: string, scheduleData: Partial<Schedule>): Observable<{ message: string; schedule: Schedule }> {
+    return this.http.post<{ message: string; schedule: Schedule }>(
+      `${this.apiUrl}/schedulr/user/save-schedule?id=${userId}`,
+      scheduleData,
+      { withCredentials: true }
+    );
+  }
 }

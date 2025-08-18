@@ -75,9 +75,9 @@ export class GoogleAuthService {
       const res = await firstValueFrom(
         this.http.get<{ user: GoogleUser }>(`${this.apiUrl}/schedulr/google-auth/me`, { withCredentials: true })
       );
-      console.log(res)
+      // console.log(res)
       this.userSubject.next(res?.user ?? null);
-      console.log(await firstValueFrom(this.user$))
+      // console.log(await firstValueFrom(this.user$))
     } catch {
       this.userSubject.next(null);
     } finally {
@@ -92,7 +92,7 @@ export class GoogleAuthService {
   }
 
   getCurrentUser(): GoogleUser | null {
-    console.log(this.userSubject.value)
+    // console.log(this.userSubject.value)
     return this.userSubject.value;
   }
 

@@ -9,17 +9,27 @@ export class AuthGuard implements CanActivate {
   constructor(private googleAuthService: GoogleAuthService, private router: Router) {}
 
   async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
-    // Hydrate once; it sets the BehaviorSubject to user or null
-    await this.googleAuthService.hydrate();
+    try {
+      // Hydrate and wait for the user observable to emit
+      await this.googleAuthService.hydrate();
+      
+      // Wait for the user observable to emit a value (either user or null)
+      const user = await firstValueFrom(this.googleAuthService.user$.pipe(take(1)));
+      
+      console.log('Auth Guard - User:', user);
 
-    // Read the current value (no filtering). BehaviorSubject will emit immediately.
-    const user = this.googleAuthService.getCurrentUser();
-    console.log(user)
-
-    if (!user) {
+      if (!user) {
+        console.log('Auth Guard - No user found, redirecting to auth');
+        this.router.navigate(['/auth'], { queryParams: { redirect: state.url } });
+        return false;
+      }
+      
+      console.log('Auth Guard - User authenticated, allowing access');
+      return true;
+    } catch (error) {
+      console.error('Auth Guard - Error during authentication check:', error);
       this.router.navigate(['/auth'], { queryParams: { redirect: state.url } });
       return false;
     }
-    return true;
   }
 }

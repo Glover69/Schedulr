@@ -45,11 +45,11 @@
         <ol class="space-y-3">
           @for (s of steps; let i = $index; track i) {
             <li>
-              <button type="button" (click)="goToStep(s.key)"
-                class="w-full shadow-xs text-left p-3 border rounded-lg transition-colors"
+              <button [disabled]="!isStepAccessible(s.key)" type="button" (click)="goToStep(s.key)"
+                class="disabled:cursor-not-allowed disabled:opacity-35 w-full shadow-xs text-left p-3 border rounded-lg transition-colors"
                 [ngClass]="{
                   'border-brand-600 bg-brand-50 text-brand-600': i === currentStepIndex,
-                  'border-gray-300 bg-gray-50': i !== currentStepIndex
+                  'border-gray-300 bg-gray-50': i !== currentStepIndex,
                 }"
                 [attr.aria-current]="i === currentStepIndex ? 'step' : null">
                 <div class="flex items-center gap-3">
@@ -356,8 +356,50 @@
         @if (classes.length > 0) {
           <!-- <span class="text-gray-800 font-semibold tracking-tight">Added Classes ({{classes.value.length}})</span> -->
 
-          <app-button iconName="eyes" hierarchy="link-color" text="View Added Classes ({{classes.value.length}})"></app-button>
+          <app-button (clicked)="sheetOpen = true" iconName="eyes" hierarchy="link-color" text="View Added Classes ({{classes.value.length}})"></app-button>
 
+          <app-sheet [(open)]="sheetOpen">
+            <div class="overflow-auto scrollbar-none w-full flex flex-col items-start gap-8 p-4 md:p-6">
+              <div class="flex flex-col items-start">
+                <span class="font-medium text-lg text-gray-800 tracking-tight">Your added classes.</span>
+                <span class="font-regular text-sm text-gray-600 opacity-60 tracking-tight">You can <span (click)="onSubmitSecondStep()" class="underline italic hover:cursor-pointer">preview</span> your schedule once you're done adding your desired classes.</span>
+              </div>
+        
+
+              <div class="flex w-full flex-col items-start gap-4">
+                @for (item of classes.value; track $index) {
+              <div [style.backgroundColor]="item.color_light" class="single-class relative w-full items-stretch flex  gap-4 rounded-xl p-3">
+                <div [style.backgroundColor]="item.color" class="w-2 flex-shrink-0 rounded-lg"></div>
+
+                <div class="right flex flex-col items-start gap-2 flex-1">
+                  <span class="text-gray-800 text-lg font-semibold tracking-tight">{{item.course_name}}</span>
+
+                  <div class="days-group flex flex-col items-start">
+                    @for (day of item.days; track $index) {
+                      <div class="day flex items-center gap-1">
+                        <span class="text-gray-600 opacity-60 font-medium tracking-tight">{{day.day}}: </span>
+                        <span class="text-gray-600 opacity-60 font-regular tracking-tight">{{day.start_time}} - {{day.end_time}}</span>
+                      </div>
+                    }
+                  </div>
+
+                  <div class="room flex items-center mt-8">
+                    <span class="text-gray-800 font-semibold tracking-tight">
+                          Rooms: <span class="font-regular ml-1">{{ getRoomsForClass(item.days) }}</span>
+                    </span>
+                  </div>
+
+
+                </div>
+
+                <i (click)="removeClass($index)" class="ph-duotone ph-trash-simple hover:cursor-pointer text-error-500"></i>
+
+              </div>
+            }
+              </div>
+
+            </div>
+          </app-sheet>
           <!-- <div class="flex w-full xl:grid xl:grid-cols-2 flex-col items-start gap-6">
             @for (item of classes.value; track $index) {
               <div [style.backgroundColor]="item.color_light" class="single-class relative w-full items-stretch flex  gap-4 rounded-xl p-5">
@@ -484,6 +526,7 @@
          </app-button>
         <app-button 
         (click)="finalizeSchedule()"
+        [loading]="isLoading"
         type="submit" 
         text="Save Schedule" 
         hierarchy="primary" 

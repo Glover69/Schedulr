@@ -21,6 +21,9 @@ import { DatePickerComponent } from '../../components/new/date-picker/date-picke
 import { ButtonComponent } from '../../components/new/button/button.component';
 import { TimePickerComponent } from '../../components/new/time-picker/time-picker.component';
 import { DrawerComponent } from '../../components/new/drawer/drawer.component';
+import { SheetComponent } from '../../components/new/sheet/sheet.component';
+import { SchedulesService } from '../../../services/schedules.service';
+import { GoogleAuthService } from '../../../services/google-auth.service';
 
 export type StepKey = 'SemInfo' | 'AddClasses' | 'PreviewSchedule';
 export type StepStatus = 'done' | 'current' | 'todo';
@@ -46,6 +49,7 @@ type PreviewEvent = {
     TimePickerComponent,
     InputFieldBaseComponent,
     DrawerComponent,
+    SheetComponent,
   ],
   templateUrl: './add-schedule.component.html',
   styleUrl: './add-schedule.component.css',
@@ -86,8 +90,11 @@ export class AddScheduleComponent implements OnInit {
   dayEntryForm: FormGroup;
 
   drawerOpen: boolean = false;
+  sheetOpen: boolean = false;
   activeDay: string | null = null;
   editingIndex: number | null = null;
+
+  isLoading = false
 
   sourceDayIndex = 0;
   syncTimes = false;
@@ -98,7 +105,9 @@ export class AddScheduleComponent implements OnInit {
     private router: Router,
     private toastService: ToastService,
     private location: Location,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private schedulesService: SchedulesService,
+    private googleAuthServices: GoogleAuthService
   ) {
     this.form = this.fb.group({
       semester: this.fb.group(
@@ -124,7 +133,7 @@ export class AddScheduleComponent implements OnInit {
       day: [''],
       start_time: ['', Validators.required],
       end_time: ['', Validators.required],
-      room: ['']
+      room: [''],
     });
   }
 
@@ -155,17 +164,123 @@ export class AddScheduleComponent implements OnInit {
   }
 
   goToStep(step: StepKey) {
-    this.currentStep = step;
+    const targetIndex = this.steps.findIndex((s) => s.key === step);
+    const currentIndex = this.currentStepIndex;
+
+    // If trying to go backwards, allow it
+    if (targetIndex <= currentIndex) {
+      this.currentStep = step;
+      return;
+    }
+
+    // If trying to go forward, validate current step first
+    if (!this.isCurrentStepValid()) {
+      this.toastService.showToast(
+        'Step incomplete',
+        'Please complete the current step before proceeding.'
+      );
+      return;
+    }
+
+    // Only allow going to the immediate next step
+    if (targetIndex === currentIndex + 1) {
+      // If navigating to PreviewSchedule step, call onSubmitSecondStep
+      if (step === 'PreviewSchedule') {
+        this.onSubmitSecondStep();
+      } else {
+        this.currentStep = step;
+      }
+    } else {
+      this.toastService.showToast(
+        'Steps must be completed in order',
+        'Please complete steps sequentially.'
+      );
+    }
+
+    // Only allow going to the immediate next step
+    if (targetIndex === currentIndex + 1) {
+      this.currentStep = step;
+    } else {
+      this.toastService.showToast(
+        'Steps must be completed in order',
+        'Please complete steps sequentially.'
+      );
+    }
   }
 
+  // Add this new method to validate the current step
+  isCurrentStepValid(): boolean {
+    switch (this.currentStep) {
+      case 'SemInfo':
+        return this.form.get('semester')?.valid ?? false;
+
+      case 'AddClasses':
+        return this.classes.length > 0;
+
+      case 'PreviewSchedule':
+        return true; // Preview step doesn't need validation
+
+      default:
+        return false;
+    }
+  }
+
+  // nextStep() {
+  //   const i = this.currentStepIndex;
+  //   if (i < this.steps.length - 1) this.currentStep = this.steps[i + 1].key;
+  // }
+
   nextStep() {
+    if (!this.isCurrentStepValid()) {
+      this.markCurrentStepAsTouched();
+      this.toastService.showToast(
+        'Step incomplete',
+        'Please complete all required fields before proceeding.'
+      );
+      return;
+    }
+
     const i = this.currentStepIndex;
+
+    if (i == 1) {
+      console.log('hi there!');
+    }
     if (i < this.steps.length - 1) this.currentStep = this.steps[i + 1].key;
   }
 
   prevStep() {
     const i = this.currentStepIndex;
     if (i > 0) this.currentStep = this.steps[i - 1].key;
+  }
+
+  markCurrentStepAsTouched() {
+    switch (this.currentStep) {
+      case 'SemInfo':
+        this.form.get('semester')?.markAllAsTouched();
+        break;
+
+      case 'AddClasses':
+        // No specific form to mark as touched since validation is just checking if classes exist
+        break;
+    }
+  }
+
+  // Add this method to check if a step is accessible
+  isStepAccessible(stepKey: StepKey): boolean {
+    const targetIndex = this.steps.findIndex((s) => s.key === stepKey);
+    const currentIndex = this.currentStepIndex;
+
+    // Current and previous steps are always accessible
+    if (targetIndex <= currentIndex) {
+      return true;
+    }
+
+    // Next step is accessible only if current step is valid
+    if (targetIndex === currentIndex + 1 && this.isCurrentStepValid()) {
+      return true;
+    }
+
+    return false;
   }
 
   goBack() {
@@ -222,7 +337,7 @@ export class AddScheduleComponent implements OnInit {
   }
 
   openDayDrawer(day: string, editIndex?: number) {
-    console.log(day, editIndex)
+    console.log(day, editIndex);
     this.activeDay = day;
     this.editingIndex = editIndex ?? null;
 
@@ -232,14 +347,14 @@ export class AddScheduleComponent implements OnInit {
         day: v.day,
         start_time: v.start_time,
         end_time: v.end_time,
-        room: v.room ?? ''
+        room: v.room ?? '',
       });
     } else {
       this.dayEntryForm.reset({
         day,
         start_time: '',
         end_time: '',
-        room: ''
+        room: '',
       });
     }
 
@@ -255,7 +370,9 @@ export class AddScheduleComponent implements OnInit {
     const toMins = (t: string) => {
       const m = t.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
       if (!m) return 0;
-      let h = +m[1]; const min = +m[2]; const ap = m[3]?.toUpperCase();
+      let h = +m[1];
+      const min = +m[2];
+      const ap = m[3]?.toUpperCase();
       if (ap === 'AM' && h === 12) h = 0;
       if (ap === 'PM' && h < 12) h += 12;
       return h * 60 + min;
@@ -281,14 +398,13 @@ export class AddScheduleComponent implements OnInit {
   getDayEntries(day: string): { index: number; value: any }[] {
     return this.days.controls
       .map((ctrl, idx) => ({ index: idx, value: ctrl.value }))
-      .filter(e => e.value.day === day);
+      .filter((e) => e.value.day === day);
   }
 
   isDaySelected(day: string): boolean {
     return this.getDayEntries(day).length > 0;
   }
 
-  
   // Methods to manage days in classForm
   toggleDay(day: string) {
     this.drawerOpen = true;
@@ -542,42 +658,42 @@ export class AddScheduleComponent implements OnInit {
   }
 
   // Returns events overlapping the [hour, hour+1) slot for a given day
-getEventsForDayAndTimeSlot(dayName: string, hour: number): PreviewEvent[] {
-  const slotStart = hour * 60;
-  const slotEnd = slotStart + 60;
+  getEventsForDayAndTimeSlot(dayName: string, hour: number): PreviewEvent[] {
+    const slotStart = hour * 60;
+    const slotEnd = slotStart + 60;
 
-  const items = (this.classes?.value ?? []) as any[];
-  const out: PreviewEvent[] = [];
+    const items = (this.classes?.value ?? []) as any[];
+    const out: PreviewEvent[] = [];
 
-  for (const cls of items) {
-    const course = cls.course_name;
-    const color = cls.color;
-    const color_light = cls.color_light ?? (cls.color_light || '#EEF2FF');
+    for (const cls of items) {
+      const course = cls.course_name;
+      const color = cls.color;
+      const color_light = cls.color_light ?? (cls.color_light || '#EEF2FF');
 
-    for (const d of cls.days ?? []) {
-      if (d.day !== dayName) continue;
+      for (const d of cls.days ?? []) {
+        if (d.day !== dayName) continue;
 
-      const start = this.toMinutes(d.start_time);
-      const end = this.toMinutes(d.end_time);
-      const overlapStart = Math.max(start, slotStart);
-      const overlapEnd = Math.min(end, slotEnd);
-      if (overlapEnd <= overlapStart) continue;
+        const start = this.toMinutes(d.start_time);
+        const end = this.toMinutes(d.end_time);
+        const overlapStart = Math.max(start, slotStart);
+        const overlapEnd = Math.min(end, slotEnd);
+        if (overlapEnd <= overlapStart) continue;
 
-      out.push({
-        id: `${course}-${dayName}-${start}-${end}`,
-        course_name: course,
-        start_time: d.start_time,
-        end_time: d.end_time,
-        room: d.room,
-        color,
-        color_light,
-        topOffset: overlapStart - slotStart, // 1px per minute (hour = 60px tall)
-        height: overlapEnd - overlapStart,
-      });
+        out.push({
+          id: `${course}-${dayName}-${start}-${end}`,
+          course_name: course,
+          start_time: d.start_time,
+          end_time: d.end_time,
+          room: d.room,
+          color,
+          color_light,
+          topOffset: overlapStart - slotStart, // 1px per minute (hour = 60px tall)
+          height: overlapEnd - overlapStart,
+        });
+      }
     }
+    return out;
   }
-  return out;
-}
 
   // Get events for a specific time slot
   getEventsForTimeSlot(hour: number) {
@@ -622,39 +738,49 @@ getEventsForDayAndTimeSlot(dayName: string, hour: number): PreviewEvent[] {
       });
     });
 
-    console.log(`Hour ${hour}:`, events);
+    // console.log(`Hour ${hour}:`, events);
     return events;
   }
 
-  finalizeSchedule() {
-    const completePayload = this.getCompleteSchedulePayload();
-    const existingSchedules = JSON.parse(
-      localStorage.getItem('schedulr-schedules') || '[]'
-    );
 
-    // Add new schedule to array
-    existingSchedules.push({
-      ...completePayload,
-      id: Date.now(), // Add unique ID
-      created_at: new Date().toISOString(),
+finalizeSchedule() {
+  this.isLoading = true;
+  const completePayload = this.getCompleteSchedulePayload();
+
+  const userId = this.googleAuthServices.getCurrentUser()?.uid;
+
+  if (userId) {
+    this.schedulesService.createSchedule(userId, completePayload).subscribe({
+      next: (res: any) => {
+        console.log('Schedule created:', res);
+        this.toastService.showToast(
+          'Schedule saved successfully.',
+          `Your schedule, ${completePayload.semester.schedule_name} was saved successfully!`
+        );
+        this.isLoading = false;
+        
+        // Navigate after a short delay to show the success state
+        setTimeout(() => {
+          this.router.navigate(['/']);
+        }, 1500);
+      },
+      error: (err: any) => {
+        console.error('Error creating schedule:', err);
+        this.toastService.showToast(
+          'Error saving schedule',
+          `An issue was encountered while saving your schedule. Please try again later.`
+        );
+        this.isLoading = false;
+      },
     });
-
-    // Save array back to localStorage
-    localStorage.setItem(
-      'schedulr-schedules',
-      JSON.stringify(existingSchedules)
-    );
-    console.log('Schedule added to localStorage array:', existingSchedules);
-
-    this.toastService.showToast(
-      'Schedule saved successfully.',
-      `Your schedule, ${completePayload.semester.schedule_name} was saved successfully!`
-    );
-
-    this.exportToICS();
-
-    this.router.navigate(['/']);
+  } else {
+    console.log('missing user id');
+    this.isLoading = false;
+    return;
   }
+}
+
+// ...existing code...
 
   exportToICS() {
     const scheduleData = this.getCompleteSchedulePayload();
