@@ -1,12 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/api:path*",
-      "destination": "https://centralbackend-zkz2.onrender.com/api/:path*"
+      "source": "/api/(.*)",
+      "destination": "https://centralbackend-zkz2.onrender.com/api/$1"
     },
     {
-        "source": "/((?!api/).*)",
-        "destination": "/index.html"
-      }
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
   ]
 }
