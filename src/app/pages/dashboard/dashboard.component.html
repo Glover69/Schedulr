@@ -51,25 +51,24 @@
 
     </div>
 
-    <div class="w-full py-4 border-b border-[#E3E4DD]">
-    <app-button
+
+
+    <div class="flex flex-col items-start gap-2 w-full">
+      <app-button
       (clicked)="isFeedbackDialogOpen = true"
       iconName="user-sound"
       text="Give Feedback"
       hierarchy="tertiary"
       class="w-full">
     </app-button>
-  </div>
-
-
 
     <div class="w-full flex flex-col items-start gap-2 py-4 border-t border-[#E3E4DD]">
       @if (!user) {
         <app-button label="Login" variant="secondary" class="xl:text-xl"></app-button>
       } @else {
-        <div class="flex flex-col items-start gap-5">
+        <div class="flex flex-col items-start gap-5 w-full">
           <div class="flex items-center gap-2">
-            <div class="img-container w-12 h-12 overflow-hidden rounded-full">
+            <div class="img-container flex md:hidden lg:flex w-12 h-12 overflow-hidden rounded-full">
               <img [src]="user.picture" class="object-cover" alt="User avatar">
             </div>
             <div class="flex flex-col items-start">
@@ -78,15 +77,23 @@
             </div>
           </div>
 
-          <app-button [size]="'sm'" [hierarchy]="'tertiary'" [type]="'button'" [icon]="'leading'" [iconName]="'sign-out'" text="Log Out" class="mt-4"></app-button>
+          <app-button [size]="'sm'" [hierarchy]="'tertiary'" [type]="'button'" [icon]="'leading'" [iconName]="'sign-out'" text="Log Out" class="mt-4 w-full"></app-button>
         </div>
       }
     </div>
+    </div>
+
   </div>
 
 
 
-  <div class="content-section flex-1 md:col-span-5 xl:col-span-7 2xl:col-span-8 flex items-center justify-center bg-[#FEFEFC]">
+  <div class="content-section flex-1 p-4 md:p-10 md:col-span-5 xl:col-span-7 2xl:col-span-8 flex flex-col gap-6 items-center bg-[#FEFEFC]">
+
+    <div class="header w-full flex flex-col items-start">
+        <span class="font-semibold flex flex-wrap text-2xl md:text-3xl tracking-tight text-gray-800">{{ greeting }}, {{first_name}}</span>
+        <span class="font-medium md:text-lg tracking-tight text-gray-600 opacity-60">What's the agenda today?</span>
+    </div>
+    
     @if (isLoading) {
       <!-- Skeleton state -->
       <div class="w-full h-full p-8 animate-pulse">
@@ -111,18 +118,18 @@
       </div>
     }
     @else if (schedules.length === 0) {
-    <div class="content-for-empty-dashboard w-full flex flex-col items-center justify-center fade-in">
-      <img src="/images/empty-dashboard.png" alt="Empty Dashboard" class="w-2/4 md:w-2/4 xl:w-2/5 2xl:w-2/7">
+    <div class="content-for-empty-dashboard w-full flex-1 flex flex-col items-center justify-center fade-in">
+      <img src="/images/empty-dashboard.png" alt="Empty Dashboard" class="w-3/4 md:w-2/4 xl:w-2/5 2xl:w-2/7">
       <span class="text-gray-800 text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight mt-4">No Schedules Available</span>
       <span class="text-gray-600 text-sm lg:text-base xl:text-2xl opacity-60 font-regular tracking-tight">Your completed schedules will appear here when done!</span>
        <app-button [routerLink]="'/add-schedule'" [size]="'sm'" [hierarchy]="'primary'" [type]="'button'" [icon]="'leading'" [iconName]="'plus'" text="Create a class schedule" class="mt-4"></app-button>
     </div>
   }@else {
-    <div class="w-full p-4 md:p-10 flex flex-col items-start gap-8 h-full fade-in">
-      <div class="header flex flex-col items-start">
+    <div class="w-full flex-1 flex flex-col items-start gap-8 h-full fade-in">
+      <!-- <div class="header flex flex-col items-start">
         <span class="font-semibold flex flex-wrap text-3xl tracking-tight text-gray-800">{{ greeting }}, {{first_name}}</span>
         <span class="font-medium text-lg tracking-tight text-gray-600 opacity-60">What's the agenda today?</span>
-      </div>
+      </div> -->
 
       <!-- Banner for creating schedules -->
 <!--      <div class="w-full">-->
@@ -155,39 +162,16 @@
 
       <div class="cards-wrapper w-full grid md:grid-cols-3 gap-6">
         @for (card of schedules; track $index) {
-          <!-- <div class="schedule-card w-full border border-gray-500 p-0.5 rounded-md shadow-sm bg-white">
-            <div class="inner-card w-full flex flex-col items-start border border-gray-300 p-4  rounded-sm">
-              <div class="flex items-center gap-2">
-                <i class="ph-duotone ph-calendar text-2xl"></i>
-                <span class="font-semibold text-gray-800 tracking-tight text-lg">{{card.semester.schedule_name}}</span>
-              </div>
+         
+          <div (click)="openSchedulePreview(card)" [style.border-color]="card.classes[0].color" class="schedule-card relative flex group cursor-pointer flex-col items-start gap-1 p-4 w-full border rounded-md shadow-sm bg-white">
+              <button 
+        (click)="deleteSchedule(card, $event)"
+        class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center bg-error-500 hover:bg-error-700 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+        title="Delete schedule"
+        type="button">
+        <i class="ph ph-trash-simple text-sm"></i>
+      </button>
 
-              <span class="font-regular text-gray-600 opacity-60 tracking-tight text-sm">{{ card.classes.length }} classes</span>
-
-              <div class="flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full" [style.background-color]="card.classes[0].color"></div>
-                <span class="font-semibold text-gray-800 tracking-tight text-lg">{{card.classes[0].course_name}}</span>
-              </div>
-            </div>
-          </div> -->
-           <!-- <div [style.border-color]="card.classes[0].color" class="schedule-card w-full border p-0.5 rounded-md shadow-sm bg-white">
-            <div [style.backgroundColor]="card.classes[0].color_light" class="inner-card w-full flex flex-col items-start border border-gray-300 p-4  rounded-sm">
-              <div class="w-10 h-10 flex items-center justify-center rounded-lg" [style.backgroundColor]="card.classes[0].color">
-                <i class="ph-fill text-white ph-calendar text-2xl"></i>
-              </div>
-               
-
-              <span [style.color]="card.classes[0].color" class="font-semibold text-gray-800 tracking-tight text-lg">{{card.semester.schedule_name}}</span>
-
-              <span [style.color]="card.classes[0].color" class="font-regular text-gray-600 opacity-60 tracking-tight text-sm">{{ card.classes.length }} classes</span>
-
-              <div class="flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full" [style.background-color]="card.classes[0].color"></div>
-                <span class="font-semibold text-gray-800 tracking-tight text-lg">{{card.classes[0].course_name}}</span>
-              </div>
-            </div>
-          </div> -->
-          <div (click)="openSchedulePreview(card)" [style.border-color]="card.classes[0].color" class="schedule-card flex cursor-pointer flex-col items-start gap-1 p-4 w-full border rounded-md shadow-sm bg-white">
               <div class="w-10 h-10 flex items-center justify-center rounded-lg" [style.backgroundColor]="card.classes[0].color">
                 <i class="ph text-white ph-calendar text-2xl"></i>
               </div>
@@ -345,3 +329,35 @@
         
       </form>
     </app-drawer>
+
+
+<app-dialog [(open)]="isDeleteDialogOpen">
+  <div class="flex flex-col gap-4">
+    <div class="flex flex-col">
+      <span class="text-lg font-semibold tracking-tight text-gray-800">Delete Schedule</span>
+      <span class="text-sm tracking-tight text-gray-600 opacity-60">
+        Are you sure you want to delete "{{ scheduleToDelete?.semester?.schedule_name }}"? 
+        This action cannot be undone.
+      </span>
+    </div>
+    
+    <div class="flex gap-3 justify-end">
+      <app-button 
+        (clicked)="closeDeleteDialog()"
+        text="Cancel" 
+        hierarchy="secondary"
+        iconName="prohibit"
+        [disabled]="isDeleteLoading">
+      </app-button>
+      
+      <app-button 
+        (clicked)="confirmDelete()"
+        text="Delete" 
+        hierarchy="primary"
+        iconName="trash"
+        [loading]="isDeleteLoading"
+        [isDestructive]="true">
+      </app-button>
+    </div>
+  </div>
+</app-dialog>

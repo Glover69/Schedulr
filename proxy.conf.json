@@ -1,6 +1,6 @@
 {
     "/api/**": {
-        "target": "http://localhost:2005/api",
+        "target": "https://centralbackend-zkz2.onrender.com/api",
         "secure": false,
         "changeOrigin": true,
         "pathRewrite": {

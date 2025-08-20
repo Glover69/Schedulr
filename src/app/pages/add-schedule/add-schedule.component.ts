@@ -780,8 +780,6 @@ finalizeSchedule() {
   }
 }
 
-// ...existing code...
-
   exportToICS() {
     const scheduleData = this.getCompleteSchedulePayload();
     const icsContent = generateICSContent(scheduleData);

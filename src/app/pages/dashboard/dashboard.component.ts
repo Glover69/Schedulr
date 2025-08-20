@@ -15,13 +15,26 @@ import { ButtonComponent } from '../../components/new/button/button.component';
 import { InputFieldBaseComponent } from '../../components/new/input-field-base/input-field-base.component';
 import { finalize, generate } from 'rxjs';
 import { Router } from '@angular/router';
-import { DrawerComponent } from "../../components/new/drawer/drawer.component";
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DrawerComponent } from '../../components/new/drawer/drawer.component';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { ToastService } from '../../../services/toast.service';
 import { DialogComponent } from "../../components/new/dialog/dialog.component";
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, ButtonComponent, ReactiveFormsModule, DrawerComponent, DialogComponent, InputFieldBaseComponent],
+  imports: [
+    CommonModule,
+    ButtonComponent,
+    ReactiveFormsModule,
+    DrawerComponent,
+    InputFieldBaseComponent,
+    DialogComponent
+],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
@@ -32,7 +45,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     { icon: '😐', label: 'Fair' },
     { icon: '👍', label: 'Good' },
     { icon: '👌', label: 'Great' },
-    { icon: '🔥', label: 'Excellent' }
+    { icon: '🔥', label: 'Excellent' },
   ];
 
   feedbackForm: FormGroup;
@@ -45,6 +58,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // Mobile sidebar state
   isSidebarOpen = false;
   isLoading = true;
+  isDeleteLoading: boolean = false;
+  isDeleteDialogOpen = false;
+  scheduleToDelete: Schedule | null = null;
 
   greeting = 'Hello';
   private greetingTimer?: number;
@@ -52,19 +68,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
   drawerOpen = false;
   selectedSchedule: Schedule | null = null;
 
-  isFeedbackDialogOpen: boolean = false
+  isFeedbackDialogOpen: boolean = false;
 
   constructor(
     private googleAuthService: GoogleAuthService,
     private schedulesService: SchedulesService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastService: ToastService
   ) {
     this.feedbackForm = this.fb.group({
       rating: ['', Validators.required],
       feedback: [''],
       contactPermission: [true],
-      joinBeta: [false]
+      joinBeta: [false],
     });
   }
 
@@ -146,10 +163,73 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.router.navigate(['/add-schedule'], {
       queryParams: {
         edit: true,
-        id: schedule.id,
+        id: schedule.schedule_id,
       },
     });
   }
+
+  deleteSchedule(schedule: Schedule, event: Event) {
+    event.stopPropagation();
+    
+    // Open confirmation dialog instead of browser confirm
+    this.scheduleToDelete = schedule;
+    this.isDeleteDialogOpen = true;
+  }
+
+  confirmDelete() {
+    if (!this.scheduleToDelete) return;
+    
+    this.isDeleteLoading = true;
+    this.schedulesService.deleteSchedule(this.scheduleToDelete.schedule_id).subscribe({
+      next: (response) => {
+        console.log(response.message);
+        this.toastService.showToast(
+          'Schedule deleted.',
+          `You've deleted your schedule, ${response.deletedSchedule.schedule_name} successfully.`
+        );
+        
+        // Remove from local schedules array
+        // this.schedules = this.schedules.filter(s => s.schedule_id !== this.scheduleToDelete!.schedule_id);
+        
+        this.isDeleteLoading = false;
+        this.closeDeleteDialog();
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      },
+      error: (error) => {
+        console.error('Delete failed:', error);
+        this.isDeleteLoading = false;
+        this.closeDeleteDialog();
+      },
+    });
+  }
+
+  closeDeleteDialog() {
+    this.isDeleteDialogOpen = false;
+    this.scheduleToDelete = null;
+  }
+
+  // deleteSchedule(schedule: Schedule, event: Event) {
+  //   event.stopPropagation();
+
+  //   this.isDeleteLoading = true;
+  //   this.schedulesService.deleteSchedule(schedule.schedule_id).subscribe({
+  //     next: (response) => {
+  //       console.log(response.message);
+  //       this.toastService.showToast(
+  //       'Schedule deleted.',
+  //       `You've deleted your schedule, ${response.deletedSchedule.schedule_name} successfully.`
+  //     );
+  //     this.isDeleteLoading = false;
+  //     },
+  //     error: (error) => {
+  //       console.error('Delete failed:', error);
+  //       this.isDeleteLoading = false;
+  //     },
+  //   });
+  // }
 
   loadAllSchedules() {
     const saved = localStorage.getItem('schedulr-schedules');
@@ -169,10 +249,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return schedules.find((schedule: any) => schedule.id === id);
   }
 
-  downloadSchedule(schedule: Schedule){
-    console.log(schedule)
+  downloadSchedule(schedule: Schedule) {
+    console.log(schedule);
     const icsContent = generateICSContent(schedule);
-    downloadICSFile(icsContent, `${schedule.semester.schedule_name}.ics`)
+    downloadICSFile(icsContent, `${schedule.semester.schedule_name}.ics`);
   }
 
   exportToICS(id: number) {
@@ -180,8 +260,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const icsContent = generateICSContent(scheduleData);
     downloadICSFile(icsContent, `${scheduleData.semester.schedule_name}.ics`);
   }
-
-
 
   // Feedback form functions
 
@@ -206,7 +284,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.isFormValid()) {
       const formValue = {
         ...this.feedbackForm.value,
-        ratingLabel: this.emojiOptions[this.selectedRating]?.label
+        ratingLabel: this.emojiOptions[this.selectedRating]?.label,
       };
       this.onClose();
     }
@@ -223,7 +301,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       rating: '',
       feedback: '',
       contactPermission: true,
-      joinBeta: false
+      joinBeta: false,
     });
   }
 }
