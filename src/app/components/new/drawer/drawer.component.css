@@ -1,0 +1,6 @@
+@media (max-width: 767px) {
+.drawer {
+  height: calc(60vh - env(keyboard-inset-height, 0px));
+  height: calc(60svh - env(keyboard-inset-height, 0px));
+}    
+}

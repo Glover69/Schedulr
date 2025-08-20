@@ -1,0 +1,22 @@
+.content-slot, .week-grid {
+  user-select: none;
+}
+
+/* Hide scrollbar cross‑browser */
+.scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
+.scrollbar-none::-webkit-scrollbar { display: none; }
+
+/* Nicer momentum + smooth scroll for strips */
+.microcards-strip, .microcard .entries {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Edge fade for horizontal scrollers */
+.mask-edge-fade {
+  /* Fade 24px on both sides; black = visible, transparent = hidden */
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
+  -webkit-mask-size: 100% 100%;
+          mask-size: 100% 100%;
+}

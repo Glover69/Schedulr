@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { InputRegularComponent } from '../../components/inputs/input-regular/input-regular.component';
 import {
   AbstractControl,
   FormArray,
@@ -10,7 +9,6 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { ButtonComponent } from '../../components/button/button.component';
 import { ToastService } from '../../../services/toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
@@ -18,23 +16,56 @@ import {
   generateICSContent,
   downloadICSFile,
 } from '../../../utils/calendar-export.utils';
-import { DatePickerComponent } from '../../components/inputs/date-picker/date-picker.component';
-import { TimePickerComponent } from '../../components/inputs/time-picker/time-picker.component';
+import { InputFieldBaseComponent } from '../../components/new/input-field-base/input-field-base.component';
+import { DatePickerComponent } from '../../components/new/date-picker/date-picker.component';
+import { ButtonComponent } from '../../components/new/button/button.component';
+import { TimePickerComponent } from '../../components/new/time-picker/time-picker.component';
+import { DrawerComponent } from '../../components/new/drawer/drawer.component';
+import { SheetComponent } from '../../components/new/sheet/sheet.component';
+import { SchedulesService } from '../../../services/schedules.service';
+import { GoogleAuthService } from '../../../services/google-auth.service';
+
+export type StepKey = 'SemInfo' | 'AddClasses' | 'PreviewSchedule';
+export type StepStatus = 'done' | 'current' | 'todo';
+type PreviewEvent = {
+  id: string;
+  course_name: string;
+  start_time: string;
+  end_time: string;
+  room?: string;
+  color: string;
+  color_light: string;
+  topOffset: number;
+  height: number;
+};
 
 @Component({
   selector: 'app-add-schedule',
   imports: [
     CommonModule,
-    InputRegularComponent,
     ReactiveFormsModule,
     ButtonComponent,
     DatePickerComponent,
     TimePickerComponent,
+    InputFieldBaseComponent,
+    DrawerComponent,
+    SheetComponent,
   ],
   templateUrl: './add-schedule.component.html',
   styleUrl: './add-schedule.component.css',
 })
 export class AddScheduleComponent implements OnInit {
+  currentStep: StepKey = 'SemInfo';
+  steps: { key: StepKey; label: string; summary?: string }[] = [
+    { key: 'SemInfo', label: 'Semester info', summary: 'Name and dates' },
+    {
+      key: 'AddClasses',
+      label: 'Add classes',
+      summary: 'Courses, days, times',
+    },
+    { key: 'PreviewSchedule', label: 'Preview', summary: 'Review and save' },
+  ];
+
   stepper = 0;
   stepMap = ['SemInfo', 'AddClasses', 'PreviewSchedule'];
   daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -56,21 +87,38 @@ export class AddScheduleComponent implements OnInit {
 
   form: FormGroup;
   classForm: FormGroup;
+  dayEntryForm: FormGroup;
+
+  drawerOpen: boolean = false;
+  sheetOpen: boolean = false;
+  activeDay: string | null = null;
+  editingIndex: number | null = null;
+
+  isLoading = false
+
+  sourceDayIndex = 0;
+  syncTimes = false;
+  syncRooms = false;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private toastService: ToastService,
     private location: Location,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private schedulesService: SchedulesService,
+    private googleAuthServices: GoogleAuthService
   ) {
     this.form = this.fb.group({
-      semester: this.fb.group({
-        schedule_name: ['', Validators.required],
-        start_date: ['', Validators.required],
-        end_date: ['', Validators.required],
-        // excluded_dates: this.fb.array([])
-      }, { validators: this.dateRangeValidator }),
+      semester: this.fb.group(
+        {
+          schedule_name: ['', Validators.required],
+          start_date: ['', Validators.required],
+          end_date: ['', Validators.required],
+          // excluded_dates: this.fb.array([])
+        },
+        { validators: this.dateRangeValidator }
+      ),
       classes: this.fb.array([]),
     });
 
@@ -79,6 +127,13 @@ export class AddScheduleComponent implements OnInit {
       color: ['', Validators.required],
       color_light: ['', Validators.required],
       days: this.fb.array([]),
+    });
+
+    this.dayEntryForm = this.fb.group({
+      day: [''],
+      start_time: ['', Validators.required],
+      end_time: ['', Validators.required],
+      room: [''],
     });
   }
 
@@ -90,6 +145,142 @@ export class AddScheduleComponent implements OnInit {
     }
 
     this.updateAvailableDays();
+  }
+
+  get currentStepIndex(): number {
+    return Math.max(
+      0,
+      this.steps.findIndex((s) => s.key === this.currentStep)
+    );
+  }
+  get progressPercent(): number {
+    return (this.currentStepIndex / (this.steps.length - 1)) * 100;
+  }
+
+  getStepStatus(i: number): StepStatus {
+    if (i < this.currentStepIndex) return 'done';
+    if (i === this.currentStepIndex) return 'current';
+    return 'todo';
+  }
+
+  goToStep(step: StepKey) {
+    const targetIndex = this.steps.findIndex((s) => s.key === step);
+    const currentIndex = this.currentStepIndex;
+
+    // If trying to go backwards, allow it
+    if (targetIndex <= currentIndex) {
+      this.currentStep = step;
+      return;
+    }
+
+    // If trying to go forward, validate current step first
+    if (!this.isCurrentStepValid()) {
+      this.toastService.showToast(
+        'Step incomplete',
+        'Please complete the current step before proceeding.'
+      );
+      return;
+    }
+
+    // Only allow going to the immediate next step
+    if (targetIndex === currentIndex + 1) {
+      // If navigating to PreviewSchedule step, call onSubmitSecondStep
+      if (step === 'PreviewSchedule') {
+        this.onSubmitSecondStep();
+      } else {
+        this.currentStep = step;
+      }
+    } else {
+      this.toastService.showToast(
+        'Steps must be completed in order',
+        'Please complete steps sequentially.'
+      );
+    }
+
+    // Only allow going to the immediate next step
+    if (targetIndex === currentIndex + 1) {
+      this.currentStep = step;
+    } else {
+      this.toastService.showToast(
+        'Steps must be completed in order',
+        'Please complete steps sequentially.'
+      );
+    }
+  }
+
+  // Add this new method to validate the current step
+  isCurrentStepValid(): boolean {
+    switch (this.currentStep) {
+      case 'SemInfo':
+        return this.form.get('semester')?.valid ?? false;
+
+      case 'AddClasses':
+        return this.classes.length > 0;
+
+      case 'PreviewSchedule':
+        return true; // Preview step doesn't need validation
+
+      default:
+        return false;
+    }
+  }
+
+  // nextStep() {
+  //   const i = this.currentStepIndex;
+  //   if (i < this.steps.length - 1) this.currentStep = this.steps[i + 1].key;
+  // }
+
+  nextStep() {
+    if (!this.isCurrentStepValid()) {
+      this.markCurrentStepAsTouched();
+      this.toastService.showToast(
+        'Step incomplete',
+        'Please complete all required fields before proceeding.'
+      );
+      return;
+    }
+
+    const i = this.currentStepIndex;
+
+    if (i == 1) {
+      console.log('hi there!');
+    }
+    if (i < this.steps.length - 1) this.currentStep = this.steps[i + 1].key;
+  }
+
+  prevStep() {
+    const i = this.currentStepIndex;
+    if (i > 0) this.currentStep = this.steps[i - 1].key;
+  }
+
+  markCurrentStepAsTouched() {
+    switch (this.currentStep) {
+      case 'SemInfo':
+        this.form.get('semester')?.markAllAsTouched();
+        break;
+
+      case 'AddClasses':
+        // No specific form to mark as touched since validation is just checking if classes exist
+        break;
+    }
+  }
+
+  // Add this method to check if a step is accessible
+  isStepAccessible(stepKey: StepKey): boolean {
+    const targetIndex = this.steps.findIndex((s) => s.key === stepKey);
+    const currentIndex = this.currentStepIndex;
+
+    // Current and previous steps are always accessible
+    if (targetIndex <= currentIndex) {
+      return true;
+    }
+
+    // Next step is accessible only if current step is valid
+    if (targetIndex === currentIndex + 1 && this.isCurrentStepValid()) {
+      return true;
+    }
+
+    return false;
   }
 
   goBack() {
@@ -108,19 +299,18 @@ export class AddScheduleComponent implements OnInit {
   }
 
   timeRangeValidator(formGroup: AbstractControl): ValidationErrors | null {
-    const startTime = formGroup.get('start_time')?.value
-    const endTime = formGroup.get('end_time')?.value
+    const startTime = formGroup.get('start_time')?.value;
+    const endTime = formGroup.get('end_time')?.value;
 
-    console.log("Start & End times: ", startTime, endTime)
-    console.log("Is start time greater than end time?: ", startTime > endTime)
+    console.log('Start & End times: ', startTime, endTime);
+    console.log('Is start time greater than end time?: ', startTime > endTime);
     // console.log(new Date().getHours())
 
-
-    if(startTime && endTime && startTime < endTime){
-      console.log("Lol")
-      return { timeRange: true }
+    if (startTime && endTime && startTime < endTime) {
+      console.log('Lol');
+      return { timeRange: true };
     }
-    return null
+    return null;
   }
 
   // loadAllSchedules() {
@@ -133,9 +323,9 @@ export class AddScheduleComponent implements OnInit {
   //   return schedules.find((schedule: any) => schedule.id === id);
   // }
 
-  get currentStep() {
-    return this.stepMap[this.stepper];
-  }
+  // get currentStep() {
+  //   return this.stepMap[this.stepper];
+  // }
 
   // Class Form getters
   get classes() {
@@ -146,8 +336,78 @@ export class AddScheduleComponent implements OnInit {
     return this.classForm.get('days') as FormArray;
   }
 
+  openDayDrawer(day: string, editIndex?: number) {
+    console.log(day, editIndex);
+    this.activeDay = day;
+    this.editingIndex = editIndex ?? null;
+
+    if (editIndex != null) {
+      const v = this.days.at(editIndex).value;
+      this.dayEntryForm.reset({
+        day: v.day,
+        start_time: v.start_time,
+        end_time: v.end_time,
+        room: v.room ?? '',
+      });
+    } else {
+      this.dayEntryForm.reset({
+        day,
+        start_time: '',
+        end_time: '',
+        room: '',
+      });
+    }
+
+    this.drawerOpen = true;
+  }
+
+  saveDayEntry() {
+    if (this.dayEntryForm.invalid) return;
+
+    const payload = this.dayEntryForm.value;
+
+    // Optional: simple time validation (start < end)
+    const toMins = (t: string) => {
+      const m = t.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+      if (!m) return 0;
+      let h = +m[1];
+      const min = +m[2];
+      const ap = m[3]?.toUpperCase();
+      if (ap === 'AM' && h === 12) h = 0;
+      if (ap === 'PM' && h < 12) h += 12;
+      return h * 60 + min;
+    };
+    if (toMins(payload.start_time) >= toMins(payload.end_time)) return;
+
+    if (this.editingIndex != null) {
+      this.days.at(this.editingIndex).patchValue(payload);
+    } else {
+      this.days.push(this.fb.group(payload));
+    }
+
+    this.drawerOpen = false;
+    this.activeDay = null;
+    this.editingIndex = null;
+  }
+
+  removeDayEntry(index: number) {
+    this.days.removeAt(index);
+  }
+
+  // Used by template to render microcards with their original indices
+  getDayEntries(day: string): { index: number; value: any }[] {
+    return this.days.controls
+      .map((ctrl, idx) => ({ index: idx, value: ctrl.value }))
+      .filter((e) => e.value.day === day);
+  }
+
+  isDaySelected(day: string): boolean {
+    return this.getDayEntries(day).length > 0;
+  }
+
   // Methods to manage days in classForm
   toggleDay(day: string) {
+    this.drawerOpen = true;
     const dayIndex = this.days.controls.findIndex(
       (control) => control.value.day === day
     );
@@ -161,9 +421,9 @@ export class AddScheduleComponent implements OnInit {
     }
   }
 
-  isDaySelected(day: string): boolean {
-    return this.days.controls.some((control) => control.value.day === day);
-  }
+  // isDaySelected(day: string): boolean {
+  //   return this.days.controls.some((control) => control.value.day === day);
+  // }
 
   // Methods to manage days in classForm
   addDay(day: string) {
@@ -240,14 +500,6 @@ export class AddScheduleComponent implements OnInit {
     return uniqueRooms.join(', ');
   }
 
-  nextStep() {
-    if (this.stepper < 2) this.stepper++;
-  }
-
-  prevStep() {
-    if (this.stepper > 0) this.stepper--;
-  }
-
   toggleColor(color: string) {
     const currentColor = this.classForm.get('color')?.value;
 
@@ -268,6 +520,45 @@ export class AddScheduleComponent implements OnInit {
 
   isColorSelected(color: string): boolean {
     return this.classForm.get('color')?.value === color;
+  }
+
+  applyConsistencyFromSource(): void {
+    const src = this.days.at(this.sourceDayIndex) as FormGroup;
+    if (!src) return;
+
+    const srcStart = src.get('start_time')?.value;
+    const srcEnd = src.get('end_time')?.value;
+    const srcRoom = src.get('room')?.value;
+
+    this.days.controls.forEach((ctrl, idx) => {
+      if (idx === this.sourceDayIndex) return; // skip source itself
+      const fg = ctrl as FormGroup;
+
+      if (this.syncTimes) {
+        fg.patchValue(
+          { start_time: srcStart, end_time: srcEnd },
+          { emitEvent: false }
+        );
+      }
+      if (this.syncRooms) {
+        fg.patchValue({ room: srcRoom }, { emitEvent: false });
+      }
+    });
+  }
+
+  onChangeSourceIndex(i: number) {
+    this.sourceDayIndex = i;
+    this.applyConsistencyFromSource();
+  }
+
+  onToggleSyncTimes(checked: boolean) {
+    this.syncTimes = checked;
+    this.applyConsistencyFromSource();
+  }
+
+  onToggleSyncRooms(checked: boolean) {
+    this.syncRooms = checked;
+    this.applyConsistencyFromSource();
   }
 
   // New methods for per-day consistency
@@ -353,6 +644,57 @@ export class AddScheduleComponent implements OnInit {
     }
   }
 
+  private toMinutes(time: string): number {
+    // Accepts "HH:mm" or "h:mm AM/PM"
+    if (!time) return 0;
+    const m = time.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+    if (!m) return 0;
+    let h = parseInt(m[1], 10);
+    const mins = parseInt(m[2], 10);
+    const ap = m[3]?.toUpperCase();
+    if (ap === 'AM' && h === 12) h = 0;
+    if (ap === 'PM' && h < 12) h += 12;
+    return h * 60 + mins;
+  }
+
+  // Returns events overlapping the [hour, hour+1) slot for a given day
+  getEventsForDayAndTimeSlot(dayName: string, hour: number): PreviewEvent[] {
+    const slotStart = hour * 60;
+    const slotEnd = slotStart + 60;
+
+    const items = (this.classes?.value ?? []) as any[];
+    const out: PreviewEvent[] = [];
+
+    for (const cls of items) {
+      const course = cls.course_name;
+      const color = cls.color;
+      const color_light = cls.color_light ?? (cls.color_light || '#EEF2FF');
+
+      for (const d of cls.days ?? []) {
+        if (d.day !== dayName) continue;
+
+        const start = this.toMinutes(d.start_time);
+        const end = this.toMinutes(d.end_time);
+        const overlapStart = Math.max(start, slotStart);
+        const overlapEnd = Math.min(end, slotEnd);
+        if (overlapEnd <= overlapStart) continue;
+
+        out.push({
+          id: `${course}-${dayName}-${start}-${end}`,
+          course_name: course,
+          start_time: d.start_time,
+          end_time: d.end_time,
+          room: d.room,
+          color,
+          color_light,
+          topOffset: overlapStart - slotStart, // 1px per minute (hour = 60px tall)
+          height: overlapEnd - overlapStart,
+        });
+      }
+    }
+    return out;
+  }
+
   // Get events for a specific time slot
   getEventsForTimeSlot(hour: number) {
     const currentDay = this.availableDays[this.currentDayIndex];
@@ -396,39 +738,47 @@ export class AddScheduleComponent implements OnInit {
       });
     });
 
-    console.log(`Hour ${hour}:`, events);
+    // console.log(`Hour ${hour}:`, events);
     return events;
   }
 
-  finalizeSchedule() {
-    const completePayload = this.getCompleteSchedulePayload();
-    const existingSchedules = JSON.parse(
-      localStorage.getItem('schedulr-schedules') || '[]'
-    );
 
-    // Add new schedule to array
-    existingSchedules.push({
-      ...completePayload,
-      id: Date.now(), // Add unique ID
-      created_at: new Date().toISOString(),
+finalizeSchedule() {
+  this.isLoading = true;
+  const completePayload = this.getCompleteSchedulePayload();
+
+  const userId = this.googleAuthServices.getCurrentUser()?.uid;
+
+  if (userId) {
+    this.schedulesService.createSchedule(userId, completePayload).subscribe({
+      next: (res: any) => {
+        console.log('Schedule created:', res);
+        this.toastService.showToast(
+          'Schedule saved successfully.',
+          `Your schedule, ${completePayload.semester.schedule_name} was saved successfully!`
+        );
+        this.isLoading = false;
+        
+        // Navigate after a short delay to show the success state
+        setTimeout(() => {
+          this.router.navigate(['/']);
+        }, 1500);
+      },
+      error: (err: any) => {
+        console.error('Error creating schedule:', err);
+        this.toastService.showToast(
+          'Error saving schedule',
+          `An issue was encountered while saving your schedule. Please try again later.`
+        );
+        this.isLoading = false;
+      },
     });
-
-    // Save array back to localStorage
-    localStorage.setItem(
-      'schedulr-schedules',
-      JSON.stringify(existingSchedules)
-    );
-    console.log('Schedule added to localStorage array:', existingSchedules);
-
-    this.toastService.showToast(
-      'Schedule saved successfully.',
-      `Your schedule, ${completePayload.semester.schedule_name} was saved successfully!`
-    );
-
-    this.exportToICS();
-
-    this.router.navigate(['/']);
+  } else {
+    console.log('missing user id');
+    this.isLoading = false;
+    return;
   }
+}
 
   exportToICS() {
     const scheduleData = this.getCompleteSchedulePayload();

@@ -1,7 +1,7 @@
 export type Schedule = {
   semester: semester;
   classes: Class[];
-  id: number;
+  schedule_id: string;
   created_at: Date
 }
 

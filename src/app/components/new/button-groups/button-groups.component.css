@@ -1,0 +1,14 @@
+/* Stretch children so dividers span full height */
+.group-attached > app-button { display: flex; }
+
+/* Remove each button’s own border/radius inside the group */
+.group-attached > app-button .btn {
+  border: 0;
+  border-radius: 0;
+  height: 100%;
+}
+
+/* Add a divider to every item except the first (i.e., all but last show a left border) */
+.group-attached > app-button + app-button {
+  border-left: 1px solid var(--color-gray-300);
+}

@@ -1,0 +1,51 @@
+<section class="entire-login bg-muted w-full h-dvh flex flex-col items-center gap-8 justify-center p-8">
+
+  <div class="flex items-center gap-1">
+      <img src="logos/icon-128x128.png" priority class="" alt="" width="48" height="48">
+      <span class="font-bold text-xl xl:text-2xl tracking-tight text-text-main">Schedulr.</span>
+  </div>
+
+  <div class="center-container bg-card w-full md:w-sm max-h-fit gap-6 flex flex-col items-center shadow-sm p-8 rounded-lg">
+    <div class="header flex flex-col items-center">
+        <!-- <app-label [text]="'Welcome Back!'" class="text-2xl" [size]="'Bold'"></app-label> -->
+        <span class="font-semibold text-gray-800 text-2xl tracking-tight">Welcome Back</span>
+        <span class="font-regular text-gray-500 tracking-tight">Login with your Google account</span>
+        <!-- <app-label [text]="'Login with your Google account'" [size]="'Regular'"></app-label> -->
+
+        
+    </div>
+    
+
+    <div class="relative w-full">
+     <!-- Your custom button (purely visual) -->
+     <app-button 
+       text="Continue with Google" 
+       hierarchy="secondary" 
+       iconName="google-logo"
+       iconStyle="duotone"
+       size="md" 
+       class="w-full">
+     </app-button>
+   
+     <!-- Invisible, clickable overlay where we render Google’s button -->
+     <div #googleBtnOverlay class="absolute inset-0 w-full h-full opacity-0"></div>
+    </div>
+
+    <span class="font-Regular text-sm text-gray-500">(We promise it'll be very quick 😉)</span>
+
+    <!-- <div class="divider-group w-full flex items-center gap-4">
+      <div class="line w-full h-[1px] bg-[#E5E5E5]"></div>
+      <app-label [text]="'Or continue with'" class="shrink-0" [size]="'Regular'"></app-label>
+      <div class="line w-full h-[1px] bg-[#E5E5E5]"></div>
+    </div>
+
+    <form class="flex flex-col items-start w-full gap-6" action="">
+      <app-input-regular label="Email" placeholder="s@example.com" formControlName="email" [required]="true" class="w-full"></app-input-regular>
+      <app-input-regular label="Password" placeholder="" formControlName="email" [required]="true" class="w-full"></app-input-regular>
+      <app-button label="Login" variant="primary" class="w-full"></app-button>
+
+    </form> -->
+
+  </div>
+
+</section>
