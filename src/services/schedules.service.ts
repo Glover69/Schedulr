@@ -30,6 +30,24 @@ export class SchedulesService {
     );
   }
 
+  getScheduleById(scheduleId: string): Observable<{ schedule: Schedule }> {
+    return this.http.get<{ schedule: Schedule }>(
+      `${this.apiUrl}/schedulr/user/get-schedule?scheduleId=${scheduleId}`,
+      { withCredentials: true }
+    );
+  }
+
+  updateSchedule(
+    scheduleId: string,
+    scheduleData: Partial<Schedule>
+  ): Observable<{ message: string; schedule: Schedule }> {
+    return this.http.put<{ message: string; schedule: Schedule }>(
+      `${this.apiUrl}/schedulr/user/update-schedule?scheduleId=${scheduleId}`,
+      scheduleData,
+      { withCredentials: true }
+    );
+  }
+
   deleteSchedule(scheduleId: string): Observable<{
     message: string;
     deletedSchedule: {
@@ -47,6 +65,17 @@ export class SchedulesService {
       };
     }>(
       `${this.apiUrl}/schedulr/user/delete-one?scheduleId=${scheduleId}`,
+      { withCredentials: true }
+    );
+  }
+
+  submitFeedback(feedbackData: {
+    rating: string;
+    message: string;
+  }): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/schedulr/feedback/submit`,
+      feedbackData,
       { withCredentials: true }
     );
   }

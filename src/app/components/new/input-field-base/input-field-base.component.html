@@ -54,7 +54,7 @@
     }
   </div>
   }@else if (inputType === 'textarea') {
-    <textarea [disabled]="disabled" [ngClass]="[isDestructive ? 'border-error-300' : 'border-gray-300']" [placeholder]="placeholder" class="placeholder:text-gray-500 resize-none shadow-xs px-3.5 py-2.5 shrink-0 rounded-lg border w-full transition-[color,box-shadow] focus:outline-none disabled:pointer-events-none disabled:bg-gray-50 disabled:cursor-not-allowed text-base md:text-sm" name="" id="" cols="30" rows="10"></textarea>
+    <textarea [value]="value" (input)="onInput($event)" (blur)="onTouched()" [disabled]="disabled" [ngClass]="[isDestructive ? 'border-error-300' : 'border-gray-300']" [placeholder]="placeholder" class="placeholder:text-gray-500 resize-none shadow-xs px-3.5 py-2.5 shrink-0 rounded-lg border w-full transition-[color,box-shadow] focus:outline-none disabled:pointer-events-none disabled:bg-gray-50 disabled:cursor-not-allowed text-base md:text-sm" name="" id="" cols="30" rows="10"></textarea>
   }
 
 

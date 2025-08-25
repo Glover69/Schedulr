@@ -49,7 +49,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ];
 
   feedbackForm: FormGroup;
-  selectedRating = -1;
+  selectedRating!: string;
 
   clientId = environment.googleClientId;
   user!: GoogleUser | null;
@@ -69,6 +69,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   selectedSchedule: Schedule | null = null;
 
   isFeedbackDialogOpen: boolean = false;
+  isFeedbackLoading: boolean = false;
 
   constructor(
     private googleAuthService: GoogleAuthService,
@@ -79,9 +80,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ) {
     this.feedbackForm = this.fb.group({
       rating: ['', Validators.required],
-      feedback: [''],
-      contactPermission: [true],
-      joinBeta: [false],
+      message: ['', Validators.required],
     });
   }
 
@@ -159,13 +158,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   editSchedule(schedule: Schedule) {
-    // Navigate to edit mode
-    this.router.navigate(['/add-schedule'], {
-      queryParams: {
-        edit: true,
-        id: schedule.schedule_id,
-      },
-    });
+    // Navigate to edit mode using the proper route
+    this.router.navigate(['/add-schedule/edit', schedule.schedule_id]);
   }
 
   deleteSchedule(schedule: Schedule, event: Event) {
@@ -263,30 +257,58 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   // Feedback form functions
 
-  selectRating(index: number) {
-    this.selectedRating = index;
-    this.feedbackForm.patchValue({ rating: index });
+  selectRating(label: string) {
+    this.selectedRating = label;
+    this.feedbackForm.patchValue({ rating: label });
+    console.log(this.feedbackForm.get('rating')?.value)
+    console.log(this.feedbackForm.value)
+
   }
 
-  getRatingButtonClass(index: number): string {
+  getRatingButtonClass(label: string): string {
     const baseClass = 'flex-1 p-4 rounded-lg border-2 transition-colors';
-    if (this.selectedRating === index) {
+    if (this.selectedRating === label) {
       return `${baseClass} border-blue-500 bg-blue-50`;
     }
     return `${baseClass} border-gray-200 hover:border-gray-300`;
   }
 
-  isFormValid(): boolean {
-    return this.feedbackForm.get('rating')?.valid ?? false;
-  }
+  // isFormValid(): boolean {
+  //   return this.feedbackForm.get('feedback')?.valid && (this.feedbackForm.get('rating')?.valid ?? false);
+  // }
 
   onSubmit() {
-    if (this.isFormValid()) {
+    if (this.feedbackForm.valid) {
+      this.isFeedbackLoading = true;
+      
       const formValue = {
         ...this.feedbackForm.value,
-        ratingLabel: this.emojiOptions[this.selectedRating]?.label,
       };
-      this.onClose();
+
+      console.log(formValue)
+
+      this.schedulesService.submitFeedback(formValue).subscribe({
+        next: (response) => {
+          console.log('Feedback submitted:', response);
+          this.toastService.showToast(
+            'Thank you for your feedback!',
+            'Your feedback has been submitted successfully. We appreciate your input!'
+          );
+          this.isFeedbackLoading = false;
+          this.onClose();
+        },
+        error: (error) => {
+          console.error('Feedback submission failed:', error);
+          this.toastService.showToast(
+            'Submission failed',
+            'There was an error submitting your feedback. Please try again later.'
+          );
+          this.isFeedbackLoading = false;
+        }
+      });
+    } else {
+      // Mark form as touched to show validation errors
+      this.feedbackForm.markAllAsTouched();
     }
   }
 
@@ -296,12 +318,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private resetForm() {
-    this.selectedRating = -1;
     this.feedbackForm.reset({
       rating: '',
-      feedback: '',
-      contactPermission: true,
-      joinBeta: false,
+      message: '',
     });
   }
 }

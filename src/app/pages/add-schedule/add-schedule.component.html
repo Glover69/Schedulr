@@ -1,5 +1,15 @@
 <div class="min-h-dvh flex flex-col bg-white">
 
+  <!-- Loading state for edit mode -->
+  @if (isEditMode && isLoading) {
+    <div class="flex-1 flex items-center justify-center">
+      <div class="text-center">
+        <div class="w-8 h-8 mx-auto mb-4 border-4 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
+        <p class="text-gray-600">Loading schedule data...</p>
+      </div>
+    </div>
+  } @else {
+
   <!-- Mobile header with progress -->
   <div class="md:hidden sticky top-0 z-20 bg-white border-b border-gray-300 px-4 py-3">
     <div class="flex items-center justify-center gap-2">
@@ -87,8 +97,12 @@
        </div> -->
    
        <div class="flex flex-col items-start">
-         <span class="text-gray-800 text-xl lg:text-2xl xl:text-3xl font-semibold tracking-tight">Set up your semester.</span>
-         <span class="text-gray-600 opacity-60 lg:text-xl font-medium tracking-tight">Start by defining your semester dates and schedule name.</span>
+         <span class="text-gray-800 text-xl lg:text-2xl xl:text-3xl font-semibold tracking-tight">
+           {{ isEditMode ? 'Edit your semester.' : 'Set up your semester.' }}
+         </span>
+         <span class="text-gray-600 opacity-60 lg:text-xl font-medium tracking-tight">
+           {{ isEditMode ? 'Update your semester dates and schedule name.' : 'Start by defining your semester dates and schedule name.' }}
+         </span>
        </div>
      </div>
    
@@ -150,8 +164,12 @@
     @case ('AddClasses'){
        <div class="header flex flex-col gap-1 items-start">
          <div class="flex flex-col items-start">
-           <span class="text-gray-800 text-xl lg:text-2xl xl:text-3xl font-semibold tracking-tight">Add your classes.</span>
-           <span class="text-gray-600 opacity-60 lg:text-xl font-medium max-w-4/5 tracking-tight">Enter course details, pick days and times, set room and color, then add each class.</span>
+           <span class="text-gray-800 text-xl lg:text-2xl xl:text-3xl font-semibold tracking-tight">
+             {{ isEditMode ? 'Update your classes.' : 'Add your classes.' }}
+           </span>
+           <span class="text-gray-600 opacity-60 lg:text-xl font-medium max-w-4/5 tracking-tight">
+             {{ isEditMode ? 'Modify course details, update days and times, rooms and colors.' : 'Enter course details, pick days and times, set room and color, then add each class.' }}
+           </span>
          </div>
       </div>
 
@@ -442,8 +460,12 @@
       <div (click)="prevStep()" class="header flex flex-col gap-1 items-start">
 
          <div class="flex flex-col items-start">
-          <span class="text-gray-800 text-xl lg:text-2xl xl:text-3xl font-semibold tracking-tight">Preview your schedule.</span>
-          <span class="text-gray-600 opacity-60 lg:text-xl fomt-medium tracking-tight">Review your complete schedule before saving.</span>
+          <span class="text-gray-800 text-xl lg:text-2xl xl:text-3xl font-semibold tracking-tight">
+            {{ isEditMode ? 'Review your changes.' : 'Preview your schedule.' }}
+          </span>
+          <span class="text-gray-600 opacity-60 lg:text-xl fomt-medium tracking-tight">
+            {{ isEditMode ? 'Review your updated schedule before saving changes.' : 'Review your complete schedule before saving.' }}
+          </span>
          </div>
 
       </div>
@@ -526,9 +548,9 @@
          </app-button>
         <app-button 
         (click)="finalizeSchedule()"
-        [loading]="isLoading"
+        [loading]="isLoadingFinalize"
         type="submit" 
-        text="Save Schedule" 
+        [text]="isEditMode ? 'Update Schedule' : 'Save Schedule'" 
         hierarchy="primary" 
         class="w-full">
       </app-button>
@@ -540,4 +562,5 @@
   </main>
   </div>
 
+  }
 </div>
