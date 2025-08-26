@@ -95,6 +95,7 @@ export class AddScheduleComponent implements OnInit {
   editingIndex: number | null = null;
 
   isLoading = false
+  isLoadingFinalize: boolean = false
 
   sourceDayIndex = 0;
   syncTimes = false;
@@ -142,7 +143,50 @@ export class AddScheduleComponent implements OnInit {
     this.isEditMode = !!this.scheduleID;
 
     if (this.isEditMode && this.scheduleID) {
+      this.loadScheduleForEdit(this.scheduleID);
     }
+
+    this.updateAvailableDays();
+  }
+
+  loadScheduleForEdit(scheduleId: string) {
+    this.isLoading = true;
+    this.schedulesService.getScheduleById(scheduleId).subscribe({
+      next: (response) => {
+        this.populateFormWithScheduleData(response.schedule);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading schedule for edit:', error);
+        this.toastService.showToast(
+          'Error loading schedule',
+          'Failed to load schedule data for editing.'
+        );
+        this.isLoading = false;
+        this.router.navigate(['/home']);
+      }
+    });
+  }
+
+  populateFormWithScheduleData(schedule: any) {
+    // Populate semester form
+    this.form.patchValue({
+      semester: {
+        schedule_name: schedule.semester.schedule_name,
+        start_date: schedule.semester.start_date,
+        end_date: schedule.semester.end_date
+      }
+    });
+
+    // Clear existing classes
+    while (this.classes.length !== 0) {
+      this.classes.removeAt(0);
+    }
+
+    // Populate classes
+    schedule.classes.forEach((classData: any) => {
+      this.classes.push(this.fb.control(classData));
+    });
 
     this.updateAvailableDays();
   }
@@ -744,38 +788,66 @@ export class AddScheduleComponent implements OnInit {
 
 
 finalizeSchedule() {
-  this.isLoading = true;
+  this.isLoadingFinalize = true;
   const completePayload = this.getCompleteSchedulePayload();
 
   const userId = this.googleAuthServices.getCurrentUser()?.uid;
 
   if (userId) {
-    this.schedulesService.createSchedule(userId, completePayload).subscribe({
-      next: (res: any) => {
-        console.log('Schedule created:', res);
-        this.toastService.showToast(
-          'Schedule saved successfully.',
-          `Your schedule, ${completePayload.semester.schedule_name} was saved successfully!`
-        );
-        this.isLoading = false;
-        
-        // Navigate after a short delay to show the success state
-        setTimeout(() => {
-          this.router.navigate(['/']);
-        }, 1500);
-      },
-      error: (err: any) => {
-        console.error('Error creating schedule:', err);
-        this.toastService.showToast(
-          'Error saving schedule',
-          `An issue was encountered while saving your schedule. Please try again later.`
-        );
-        this.isLoading = false;
-      },
-    });
+    if (this.isEditMode && this.scheduleID) {
+      // Update existing schedule
+      this.schedulesService.updateSchedule(this.scheduleID, completePayload).subscribe({
+        next: (res: any) => {
+          console.log('Schedule updated:', res);
+          this.toastService.showToast(
+            'Schedule updated successfully.',
+            `Your schedule, ${completePayload.semester.schedule_name} was updated successfully!`
+          );
+          this.isLoadingFinalize = false;
+          
+          // Navigate after a short delay to show the success state
+          setTimeout(() => {
+            this.router.navigate(['/home']);
+          }, 1500);
+        },
+        error: (err: any) => {
+          console.error('Error updating schedule:', err);
+          this.toastService.showToast(
+            'Error updating schedule',
+            `An issue was encountered while updating your schedule. Please try again later.`
+          );
+          this.isLoadingFinalize = false;
+        },
+      });
+    } else {
+      // Create new schedule
+      this.schedulesService.createSchedule(userId, completePayload).subscribe({
+        next: (res: any) => {
+          console.log('Schedule created:', res);
+          this.toastService.showToast(
+            'Schedule saved successfully.',
+            `Your schedule, ${completePayload.semester.schedule_name} was saved successfully!`
+          );
+          this.isLoadingFinalize = false;
+          
+          // Navigate after a short delay to show the success state
+          setTimeout(() => {
+            this.router.navigate(['/home']);
+          }, 1500);
+        },
+        error: (err: any) => {
+          console.error('Error creating schedule:', err);
+          this.toastService.showToast(
+            'Error saving schedule',
+            `An issue was encountered while saving your schedule. Please try again later.`
+          );
+          this.isLoadingFinalize = false;
+        },
+      });
+    }
   } else {
     console.log('missing user id');
-    this.isLoading = false;
+    this.isLoadingFinalize = false;
     return;
   }
 }
