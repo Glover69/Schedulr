@@ -77,7 +77,16 @@
             </div>
           </div>
 
-          <app-button [size]="'sm'" [hierarchy]="'tertiary'" [type]="'button'" [icon]="'leading'" [iconName]="'sign-out'" text="Log Out" class="mt-4 w-full"></app-button>
+          <app-button 
+            (clicked)="logout()" 
+            [size]="'sm'" 
+            [hierarchy]="'tertiary'" 
+            [type]="'button'" 
+            [icon]="'leading'" 
+            [iconName]="'sign-out'" 
+            text="Log Out" 
+            class="mt-4 w-full">
+          </app-button>
         </div>
       }
     </div>
@@ -363,6 +372,36 @@
         hierarchy="primary"
         iconName="trash"
         [loading]="isDeleteLoading"
+        [isDestructive]="true">
+      </app-button>
+    </div>
+  </div>
+</app-dialog>
+
+<app-dialog [(open)]="isLogoutDialogOpen">
+  <div class="flex flex-col gap-4">
+    <div class="flex flex-col">
+      <span class="text-lg font-semibold tracking-tight text-gray-800">Confirm Logout</span>
+      <span class="text-sm tracking-tight text-gray-600 opacity-60">
+        Are you sure you want to log out? You'll need to sign in again to access your schedules.
+      </span>
+    </div>
+    
+    <div class="flex gap-3 justify-end">
+      <app-button 
+        (clicked)="closeLogoutDialog()"
+        text="Cancel" 
+        hierarchy="secondary"
+        iconName="prohibit"
+        [disabled]="isLogoutLoading">
+      </app-button>
+      
+      <app-button 
+        (clicked)="confirmLogout()"
+        text="Log Out" 
+        hierarchy="primary"
+        iconName="sign-out"
+        [loading]="isLogoutLoading"
         [isDestructive]="true">
       </app-button>
     </div>

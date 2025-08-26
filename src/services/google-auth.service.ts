@@ -99,11 +99,14 @@ export class GoogleAuthService {
   // Optional: if you add a backend logout route, call it here and clear local state
   async logout(): Promise<void> {
     try {
-      await fetch(`${this.apiUrl}/schedulr/logout`, {
-        method: 'POST',
-        credentials: 'include',
-      });
-    } catch {}
+      await firstValueFrom(
+        this.http.post(`${this.apiUrl}/schedulr/google-auth/logout`, {}, { withCredentials: true })
+      );
+    } catch (error) {
+      console.error('Logout endpoint error:', error);
+      // Continue with clearing local state even if backend call fails
+    }
     this.userSubject.next(null);
+    this.hydrated = false;
   }
 }

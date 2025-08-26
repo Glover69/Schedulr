@@ -70,6 +70,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   isFeedbackDialogOpen: boolean = false;
   isFeedbackLoading: boolean = false;
+  isLogoutLoading: boolean = false;
+  isLogoutDialogOpen: boolean = false;
 
   constructor(
     private googleAuthService: GoogleAuthService,
@@ -322,5 +324,46 @@ export class DashboardComponent implements OnInit, OnDestroy {
       rating: '',
       message: '',
     });
+  }
+
+  logout() {
+    // Open confirmation dialog instead of logging out immediately
+    this.isLogoutDialogOpen = true;
+  }
+
+  async confirmLogout() {
+    this.isLogoutLoading = true;
+    
+    try {
+      await this.googleAuthService.logout();
+      this.toastService.showToast(
+        'Logged out successfully',
+        'You have been logged out. Redirecting to login...'
+      );
+      
+      // Close dialog first
+      this.isLogoutDialogOpen = false;
+      this.isLogoutLoading = false;
+      
+      // Small delay to show the toast, then redirect
+      // setTimeout(() => {
+      //   this.router.navigate(['/auth']);
+      // }, 500);
+              this.router.navigate(['/auth']);
+
+    } catch (error) {
+      console.error('Logout failed:', error);
+      this.toastService.showToast(
+        'Logout failed',
+        'There was an error logging out. Please try again.'
+      );
+      this.isLogoutLoading = false;
+    }
+  }
+
+  closeLogoutDialog() {
+    if (!this.isLogoutLoading) {
+      this.isLogoutDialogOpen = false;
+    }
   }
 }
