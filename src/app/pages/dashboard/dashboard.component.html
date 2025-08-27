@@ -175,7 +175,7 @@
           <div (click)="openSchedulePreview(card)" [style.border-color]="card.classes[0].color" class="schedule-card relative flex group cursor-pointer flex-col items-start gap-1 p-4 w-full border rounded-md shadow-sm bg-white">
               <button 
         (click)="deleteSchedule(card, $event)"
-        class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center bg-error-500 hover:bg-error-700 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+        class="absolute top-3 right-3 w-8 h-8 hidden lg:flex items-center justify-center bg-error-500 hover:bg-error-700 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
         title="Delete schedule"
         type="button">
         <i class="ph ph-trash-simple text-sm"></i>
@@ -266,6 +266,15 @@
           </div>
         }
       </div>
+
+      <app-button 
+          (clicked)="deleteSchedule(selectedSchedule, $event)"
+          iconName="trash-simple" 
+          text="Delete this schedule" 
+          hierarchy="primary"
+          [isDestructive]="true"
+          class="flex-1 flex lg:hidden mt-4">
+        </app-button>
     </div>
 
     <!-- Actions -->
@@ -370,7 +379,7 @@
         (clicked)="confirmDelete()"
         text="Delete" 
         hierarchy="primary"
-        iconName="trash"
+        iconName="trash-simple"
         [loading]="isDeleteLoading"
         [isDestructive]="true">
       </app-button>

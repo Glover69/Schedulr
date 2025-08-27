@@ -2,11 +2,11 @@
   <!-- Backdrop -->
   <div 
     (click)="closeDrawer()"
-    class="fixed inset-0 bg-black/50 z-40">
+    class="fixed inset-0 bg-black/50 z-50">
   </div>
   
   <!-- Drawer -->
-  <div #drawer class="drawer w-full rounded-tl-lg border border-gray-300 border-b-0 justify-self-center rounded-tr-lg lg:w-2/5 fixed bottom-0 left-0 right-0 z-[9999] bg-white max-h-[60svh] flex flex-col lg:items-center">
+  <div #drawer class="drawer w-full rounded-tl-lg border border-gray-300 border-b-0 justify-self-center rounded-tr-lg lg:w-2/5 fixed bottom-0 left-0 right-0 z-60 bg-white max-h-[60svh] flex flex-col lg:items-center">
    <ng-content></ng-content>
   </div>
 }

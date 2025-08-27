@@ -369,7 +369,7 @@ body {
   }
 
   .btn-destructive {
-    @apply bg-error-300 text-white hover:bg-error-700 disabled:bg-error-100
+    @apply bg-error-500 text-white hover:bg-error-700 disabled:bg-error-100
            focus-visible:ring-error-100;
   }
 
