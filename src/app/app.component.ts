@@ -36,6 +36,10 @@ export class AppComponent implements OnInit {
     return this.router.url.includes('/auth') || this.router.url === '/auth-callback';
   }
 
+  get isLegalRoute(): boolean {
+    return this.router.url.includes('/privacy-policy') || this.router.url.includes('/terms-of-service');
+  }
+
   constructor(private router: Router, private toastService: ToastService){}
 
   // ngOnInit() {

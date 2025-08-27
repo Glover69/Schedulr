@@ -1,10 +1,16 @@
-@if (!isAuthRoute) {
+@if (!isAuthRoute && !isLegalRoute) {
 <section class="">
   <router-outlet></router-outlet>
 </section>
 }
 
 @if (isAuthRoute) {
+  <div>
+  <router-outlet></router-outlet>
+</div>
+}
+
+@if (isLegalRoute) {
   <div>
   <router-outlet></router-outlet>
 </div>

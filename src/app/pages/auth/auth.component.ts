@@ -4,13 +4,14 @@ import {
   GoogleUser,
 } from '../../../services/google-auth.service';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { ButtonComponent } from '../../components/new/button/button.component';
 
 
 @Component({
   selector: 'app-auth',
-  imports: [CommonModule, ButtonComponent],
+  imports: [CommonModule, ButtonComponent, RouterLink],
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.css',
 })
