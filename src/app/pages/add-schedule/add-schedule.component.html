@@ -84,7 +84,7 @@
       </div>
   </aside>
 
- 
+
   <main class="min-w-0 col-span-3 xl:col-span-6 flex items-center justify-center">
     <div class="flex flex-col gap-8 md:max-w-4/5 xl:max-w-3/5">
 
@@ -95,7 +95,7 @@
        <!-- <div (click)="goBack()" class="back-btn cursor-pointer cursor w-8 h-8 rounded-full flex items-center justify-center border border-gray-300">
          <span class="text-lg">←</span>
        </div> -->
-   
+
        <div class="flex flex-col items-start">
          <span class="text-gray-800 text-xl lg:text-2xl xl:text-3xl font-semibold tracking-tight">
            {{ isEditMode ? 'Edit your semester.' : 'Set up your semester.' }}
@@ -105,24 +105,24 @@
          </span>
        </div>
      </div>
-   
+
      <div class="flex w-full flex-col items-start gap-6">
        <!-- <span class="text-text-main text-xl lg:text-2xl xl:text-3xl font-semibold tracking-tight">Semester Information</span> -->
-   
+
        <form [formGroup]="form" (ngSubmit)="onSubmitFirstStep()" class="w-full flex flex-col gap-6">
          <div formGroupName="semester" class="flex flex-col gap-4 w-full">
-           
+
            <app-input-field-base formControlName="schedule_name" [required]="true" label="Semester Name" placeholder="eg. Fall 2025 Semester"></app-input-field-base>
-   
+
            <div class="w-full flex flex-col sm:grid sm:grid-cols-2 gap-4">
-       
+
              <app-date-picker label="Start Date"
                type="date"
                formControlName="start_date"
                [required]="true"
                class="w-full">
              </app-date-picker>
-   
+
              <div class="flex flex-col items-start">
                <app-date-picker label="End Date"
                type="date"
@@ -130,7 +130,7 @@
                [required]="true"
                class="w-full">
                </app-date-picker>
-   
+
                <!-- Show error message for date range -->
                @if (form.get('semester')?.hasError('dateRange')) {
                  <div class="text-red-500 font-regular tracking-tight text-sm mt-2">
@@ -138,21 +138,21 @@
                  </div>
                }
              </div>
-   
+
            </div>
          </div>
-   
+
          <div class="grid grid-cols-2 gap-4">
           <app-button [routerLink]="'/home'"
-           iconName="arrow-left" 
-           type="button" 
-           text="Back to home" 
+           iconName="arrow-left"
+           type="button"
+           text="Back to home"
            hierarchy="tertiary">
          </app-button>
-         <app-button 
-           type="submit" 
-           [disabled]="form.get('semester')?.invalid" 
-           text="Next" 
+         <app-button
+           type="submit"
+           [disabled]="form.get('semester')?.invalid"
+           text="Next"
            hierarchy="primary">
          </app-button>
 
@@ -198,7 +198,7 @@
               </div>
 
               <!-- Microcards under chips -->
-               
+
 
 
 
@@ -217,7 +217,7 @@
                     </select>
                     <span class="text-sm text-gary-800 opacity-60">to all selected days</span>
                   </div>
-              
+
                   <div class="flex items-center gap-4">
                     <label class="inline-flex items-center gap-2 cursor-pointer">
                       <input type="checkbox"
@@ -226,7 +226,7 @@
                              (change)="onToggleSyncTimes($any($event.target).checked)">
                       <span class="text-sm font-medium text-gray-800 tracking-tight">Use same time</span>
                     </label>
-              
+
                     <label class="inline-flex items-center gap-2 cursor-pointer">
                       <input type="checkbox"
                              class="w-4 h-4 rounded border-gray-300 text-gray-800 focus:ring-brand-600"
@@ -234,7 +234,7 @@
                              (change)="onToggleSyncRooms($any($event.target).checked)">
                       <span class="text-sm font-medium text-gray-800 tracking-tight">Use same room</span>
                     </label>
-              
+
                     <app-button
                       type="button"
                       icon="false"
@@ -251,8 +251,8 @@
 
               <!-- <button class="btn btn-primary" (click)="drawerOpen = true">Open drawer</button> -->
 
-               
-               
+
+
               <!-- <div formArrayName="days" class="w-full flex flex-col md:grid md:grid-cols-2 gap-4 mt-4">
                 @for (dayGroup of days.controls; track $index) {
                   <div [formGroupName]="$index" class="p-5 border border-gray-300 shadow-xs rounded-lg flex flex-col gap-3 bg-white md:bg-gray-50/500">
@@ -282,7 +282,7 @@
                   </div>
                 }
               </div> -->
-         
+
 
             </div>
 
@@ -321,14 +321,14 @@
                    <span class="text-xl font-semibold text-gray-800 tracking-tight">Add time for {{ activeDay }}</span>
                    <button type="button" class="text-sm text-gray-500 hover:text-gray-700" (click)="drawerOpen = false">Close</button>
                  </div>
-             
+
                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                    <app-time-picker [fullWidth]="true" label="Start Time" placeholder_two="Start Time" formControlName="start_time" [required]="true"></app-time-picker>
                    <app-time-picker [fullWidth]="true" label="End Time" placeholder_two="End Time" formControlName="end_time" [required]="true"></app-time-picker>
                  </div>
-             
+
                  <app-input-field-base formControlName="room" label="Room" placeholder="eg. Room 101"></app-input-field-base>
-             
+
                  <div class="flex items-center justify-end gap-3">
                    <app-button type="button" iconName="x" hierarchy="tertiary" text="Cancel" (clicked)="drawerOpen = false"></app-button>
                    <app-button [disabled]="!this.dayEntryForm.valid" type="submit" iconName="plus" hierarchy="primary" text="{{ editingIndex != null ? 'Save changes' : 'Add time' }}"></app-button>
@@ -357,17 +357,17 @@
 
           <div class="grid grid-cols-2 gap-4">
           <app-button (clicked)="prevStep()"
-           iconName="arrow-left" 
-           type="button" 
-           text="Back" 
+           iconName="arrow-left"
+           type="button"
+           text="Back"
            hierarchy="tertiary">
          </app-button>
-         <app-button 
+         <app-button
            type="submit" [disabled]="!classForm.valid" text="Add Class" hierarchy="primary">
          </app-button>
 
          </div>
-          
+
         </form>
 
 
@@ -382,7 +382,7 @@
                 <span class="font-medium text-lg text-gray-800 tracking-tight">Your added classes.</span>
                 <span class="font-regular text-sm text-gray-600 opacity-60 tracking-tight">You can <span (click)="onSubmitSecondStep()" class="underline italic hover:cursor-pointer">preview</span> your schedule once you're done adding your desired classes.</span>
               </div>
-        
+
 
               <div class="flex w-full flex-col items-start gap-4">
                 @for (item of classes.value; track $index) {
@@ -411,6 +411,7 @@
                 </div>
 
                 <i (click)="removeClass($index)" class="ph-duotone ph-trash-simple hover:cursor-pointer text-error-500"></i>
+                <i (click)="editClass($index)" class="ph-duotone ph-pencil hover:cursor-pointer text-error-500"></i>
 
               </div>
             }
@@ -478,19 +479,19 @@
 
            <!-- Day Navigation -->
            <div class="day-navigation flex items-center justify-between w-full max-w-sm bg-white border border-gray-300 rounded-lg p-1">
-             <button 
-               (click)="previousDay()" 
+             <button
+               (click)="previousDay()"
                [disabled]="currentDayIndex === 0"
                class="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
                <span class="text-base ph ph-arrow-left"></span>
              </button>
-             
+
              <span class="tracking-tight fomt-semibold text-gray-800 px-4">
                {{ getCurrentDayName() }}
              </span>
-             
-             <button 
-               (click)="nextDay()" 
+
+             <button
+               (click)="nextDay()"
                [disabled]="currentDayIndex === availableDays.length - 1"
                class="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
                <span class="text-base ph ph-arrow-right"></span>
@@ -501,25 +502,25 @@
          <div class="schedule-grid w-full bg-white border border-gray-300 rounded-lg overflow-scroll h-[20rem] md:h-[30rem]">
            <!-- Grid container with CSS Grid -->
            <div class="grid grid-cols-[100px_1fr] bg-white">
-             
+
              <!-- Generate time slots from 8:00 to 23:00 -->
              @for (hour of timeSlots; track hour) {
                <!-- Time label -->
                <div class="time-slot border-b border-r border-gray-200 p-3 bg-gray-50 flex items-start">
                  <span class="text-sm SF-Medium text-text-main">{{ hour }}:00</span>
                </div>
-               
+
                <!-- Content area for this hour -->
                <div class="content-slot border-b border-gray-200 relative min-h-[60px] bg-white">
                  <!-- Events for this time slot -->
                  @for (event of getEventsForTimeSlot(hour); track event.id) {
-                   <div 
+                   <div
                      [style.backgroundColor]="event.color_light"
                      [style.top.px]="event.topOffset"
                      [style.height.px]="event.height"
                      class="absolute z-[10000] left-0 right-0 mx-1 rounded-md flex items-start gap-2 p-2 border-l-4"
                      [style.border-left-color]="event.color">
-                     
+
                      <div class="flex flex-col">
                        <span class="text-sm xl:text-base font-semibold text-gray-800 tracking-tight">{{ event.course_name }}</span>
                        <span class="text-xs xl:text-sm font-regular text-gray-600 opacity-60 tracking-tight">
@@ -533,7 +534,7 @@
                  }
                </div>
              }
-             
+
            </div>
          </div>
 
@@ -541,21 +542,21 @@
 
       <div class="grid grid-cols-2 gap-4">
         <app-button (clicked)="prevStep()"
-           iconName="arrow-left" 
-           type="button" 
-           text="Back" 
+           iconName="arrow-left"
+           type="button"
+           text="Back"
            hierarchy="tertiary">
          </app-button>
-        <app-button 
+        <app-button
         (click)="finalizeSchedule()"
         [loading]="isLoadingFinalize"
-        type="submit" 
-        [text]="isEditMode ? 'Update Schedule' : 'Save Schedule'" 
-        hierarchy="primary" 
+        type="submit"
+        [text]="isEditMode ? 'Update Schedule' : 'Save Schedule'"
+        hierarchy="primary"
         class="w-full">
       </app-button>
       </div>
-      
+
     }
   }
   </div>

@@ -539,6 +539,35 @@ export class AddScheduleComponent implements OnInit {
     }
   }
 
+  editClass(index: number){
+    // Pick the particular class to be edited using it's index
+    const classData = this.classes.at(index).value;
+
+    // Reset the add class form with its data
+    this.classForm.reset({
+      course_name: classData.course_name,
+      color: classData.color,
+      color_light: classData.color_light,
+    });
+
+    // Clear the previous days selected and update it with
+    // the days of the class being edited
+    this.days.clear();
+    classData.days.forEach((dayEntry: any) => {
+      this.days.push(
+        this.fb.group({
+          day: [dayEntry.day, Validators.required],
+          start_time: [dayEntry.start_time, Validators.required],
+          end_time: [dayEntry.end_time, Validators.required],
+          room: [dayEntry.room || ''],
+        })
+      );
+    });
+
+    // Finally remove the class from the list of added classes
+    this.classes.removeAt(index);
+  }
+
   getRoomsForClass(days: any[]): string {
     const uniqueRooms = [...new Set(days.map((day) => day.room))];
     return uniqueRooms.join(', ');
@@ -804,7 +833,7 @@ finalizeSchedule() {
             `Your schedule, ${completePayload.semester.schedule_name} was updated successfully!`
           );
           this.isLoadingFinalize = false;
-          
+
           // Navigate after a short delay to show the success state
           setTimeout(() => {
             this.router.navigate(['/home']);
@@ -829,7 +858,7 @@ finalizeSchedule() {
             `Your schedule, ${completePayload.semester.schedule_name} was saved successfully!`
           );
           this.isLoadingFinalize = false;
-          
+
           // Navigate after a short delay to show the success state
           setTimeout(() => {
             this.router.navigate(['/home']);
