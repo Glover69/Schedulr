@@ -1,6 +1,6 @@
 {
     "/api/**": {
-        "target": "https://centralbackend-zkz2.onrender.com/api",
+        "target": "https://centralbackend.vercel.app/api",
         "secure": false,
         "changeOrigin": true,
         "pathRewrite": {
