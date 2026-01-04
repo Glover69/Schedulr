@@ -122,8 +122,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private updateGreeting(date: Date = new Date()) {
     const h = date.getHours(); // user’s local time
-    if (h >= 5 && h < 12) this.greeting = 'Good morning';
-    else if (h >= 12 && h < 17) this.greeting = 'Good afternoon';
+    if (h >= 0 && h < 12) this.greeting = 'Good morning';
+    else if (h >= 12 && h < 16) this.greeting = 'Good afternoon';
     else this.greeting = 'Good evening';
   }
 
