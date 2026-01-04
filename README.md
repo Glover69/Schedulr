@@ -38,34 +38,22 @@ This platform makes it effortless to:
 
   You start off by inputting a name for the schedule (it can be anything), then the time frame of that schedule. We recommend using the time-frame of your semester, so that when the semester ends, you stop seeing school stuff in your calendar app.
 
-  Step 2 of the process is adding your classes
+  Step 2 of the process is adding your classes. Each class takes all the days (and their times) you have that class in a week, the name of the class, as well as the rooms/lecture halls you have them in (an optional nice-to-have).
 
 
-  ![Login Page](public/screenshots/edit-schedule.png) ![](public/screenshots/add-and-view-classes.png)
+<html>
+ <p align="center">
+  <img src="public/screenshots/edit-schedule.png" width="48%">
+  &nbsp;&nbsp;&nbsp;
+  <img src="public/screenshots/add-and-view-classes.png" width="48%">
+ </p>
+</html>
 
-## 🚀 Features
 
-### 🧱 Core Features
+- **Preview Schedules before saving**
 
-- 🧾 **Timetable Input Interface**  
-  Add courses with:
-  - Course name  
-  - Day(s) of the week  
-  - Start & end times  
-  - Optional room/location  
-  - Support for recurring classes  
+  Personally one of my favorite features, Step 3 allows you to preview your schedule in a calendar-like layout with your classes in all the times you've put them, for all the days of the week. And they're color-coded, to improve clarity when viewing them. After previewing, when all is good, then you can save your schedule (or update if editing) and it'll be accesible on any device that you log in to. You can even use this to plan your schedule ahead of time before registering courses, for instance.
 
-- 📅 **Semester Settings**  
-  - Define semester start and end dates  
-  - Include only selected weekdays  
-  - Exclude public holidays or mid-semester breaks (manual for now)
-
-- 📥 **ICS File Generator**  
-  - One-click export to `.ics`  
-  - Works with Google Calendar, Apple Calendar, and Outlook  
-  - Handles recurring events based on semester schedule
-
-- 👁️ **Timetable Preview**  
-  - Visual grid layout with time blocks  
-  - Helps users confirm schedule before exporting
+![Preview Page](public/screenshots/preview-schedule.png)
+  
 
