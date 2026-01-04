@@ -16,8 +16,6 @@ export class AppComponent implements OnInit {
   toastHeader: string = '';
   title = 'schedulr';
 
-  private auth = inject(GoogleAuthService);
-
   async ngOnInit() {
     // await this.auth.hydrate();
 

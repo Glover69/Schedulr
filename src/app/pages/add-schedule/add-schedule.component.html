@@ -1,4 +1,4 @@
-<div class="min-h-dvh flex flex-col bg-white">
+<div class="min-h-dvh flex flex-col bg-gray-bg">
 
   <!-- Loading state for edit mode -->
   @if (isEditMode && isLoading) {
@@ -11,14 +11,14 @@
   } @else {
 
   <!-- Mobile header with progress -->
-  <div class="md:hidden sticky top-0 z-20 bg-white border-b border-gray-300 px-4 py-3">
+  <div class="md:hidden sticky top-0 z-20 bg-gray-bg dark:bg-gray-25 border-b border-gray-200 px-4 py-3">
     <div class="flex items-center justify-center gap-2">
           <img src="/icons/schedulr-logo-new.svg" width="32" height="32" alt="" class="rounded-md" />
-          <span class="font-bold text-xl text-text-main tracking-tight">Schedulr.</span>
+          <span class="font-bold text-xl text-text-main tracking-tight text-gray-800 dark:text-gray-900">Schedulr.</span>
         </div>
     <!-- <div class="flex items-center justify-between">
       <button type="button" (click)="prevStep()" [disabled]="currentStepIndex === 0"
-        class="px-3 py-1.5 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
+        class="px-3 py-1.5 border border-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
         ← Back
       </button>
       <div class="flex items-center gap-2">
@@ -33,7 +33,7 @@
         }
       </div>
       <button type="button" (click)="nextStep()" [disabled]="currentStepIndex === steps.length - 1"
-        class="px-3 py-1.5 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
+        class="px-3 py-1.5 border border-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
         Next →
       </button>
     </div>
@@ -59,7 +59,7 @@
                 class="disabled:cursor-not-allowed disabled:opacity-35 w-full shadow-xs text-left p-3 border rounded-lg transition-colors"
                 [ngClass]="{
                   'border-brand-600 bg-brand-50 text-brand-600': i === currentStepIndex,
-                  'border-gray-300 bg-gray-50': i !== currentStepIndex,
+                  'border-gray-200 bg-gray-50': i !== currentStepIndex,
                 }"
                 [attr.aria-current]="i === currentStepIndex ? 'step' : null">
                 <div class="flex items-center gap-3">
@@ -92,15 +92,15 @@
     @switch (currentStep){
     @case ('SemInfo'){
      <div class="header flex flex-col gap-1 items-start">
-       <!-- <div (click)="goBack()" class="back-btn cursor-pointer cursor w-8 h-8 rounded-full flex items-center justify-center border border-gray-300">
+       <!-- <div (click)="goBack()" class="back-btn cursor-pointer cursor w-8 h-8 rounded-full flex items-center justify-center border border-gray-200">
          <span class="text-lg">←</span>
        </div> -->
    
        <div class="flex flex-col items-start">
-         <span class="text-gray-800 text-xl lg:text-2xl xl:text-3xl font-semibold tracking-tight">
+         <span class="text-gray-800 dark:text-gray-900 text-xl lg:text-2xl xl:text-3xl font-medium tracking-tight">
            {{ isEditMode ? 'Edit your semester.' : 'Set up your semester.' }}
          </span>
-         <span class="text-gray-600 opacity-60 lg:text-xl font-medium tracking-tight">
+         <span class="text-gray-700 dark:text-gray-800 opacity-60 lg:text-xl font-normal tracking-tight">
            {{ isEditMode ? 'Update your semester dates and schedule name.' : 'Start by defining your semester dates and schedule name.' }}
          </span>
        </div>
@@ -189,7 +189,7 @@
                     (click)="openDayDrawer(day)"
                     [ngClass]="{
                       'bg-brand-50 text-brand-600 border-brand-600': isDaySelected(day),
-                      'border-gray-300': !isDaySelected(day)
+                      'border-gray-200': !isDaySelected(day)
                     }"
                     class='text-xs border cursor-pointer xl:text-sm font-medium shadow-xs tracking-tight px-3 py-1 rounded-full'>
                   {{day}}
@@ -203,12 +203,12 @@
 
 
               <!-- Consistency toolbar -->
-              <!-- <div class="w-full mt-2 rounded-lg border border-gray-300 bg-white p-3">
+              <!-- <div class="w-full mt-2 rounded-lg border border-gray-200 bg-white p-3">
                 <div class="flex flex-col md:flex-row md:flex-wrap md:items-center md:justify-between gap-3">
                   <div class="flex items-center gap-2">
                     <span class="text-sm font-semiold text-gray-800 tracking-tight">Apply from</span>
                     <select
-                      class="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white"
+                      class="text-sm border border-gray-200 rounded-md px-2 py-1 bg-white"
                       [value]="sourceDayIndex"
                       (change)="onChangeSourceIndex($any($event.target).value)">
                       @for (dayGroup of days.controls; let i = $index; track i) {
@@ -221,7 +221,7 @@
                   <div class="flex items-center gap-4">
                     <label class="inline-flex items-center gap-2 cursor-pointer">
                       <input type="checkbox"
-                             class="w-4 h-4 rounded border-gray-300 text-gray-800 focus:ring-brand-600"
+                             class="w-4 h-4 rounded border-gray-200 text-gray-800 focus:ring-brand-600"
                              [checked]="syncTimes"
                              (change)="onToggleSyncTimes($any($event.target).checked)">
                       <span class="text-sm font-medium text-gray-800 tracking-tight">Use same time</span>
@@ -229,7 +229,7 @@
               
                     <label class="inline-flex items-center gap-2 cursor-pointer">
                       <input type="checkbox"
-                             class="w-4 h-4 rounded border-gray-300 text-gray-800 focus:ring-brand-600"
+                             class="w-4 h-4 rounded border-gray-200 text-gray-800 focus:ring-brand-600"
                              [checked]="syncRooms"
                              (change)="onToggleSyncRooms($any($event.target).checked)">
                       <span class="text-sm font-medium text-gray-800 tracking-tight">Use same room</span>
@@ -255,7 +255,7 @@
                
               <!-- <div formArrayName="days" class="w-full flex flex-col md:grid md:grid-cols-2 gap-4 mt-4">
                 @for (dayGroup of days.controls; track $index) {
-                  <div [formGroupName]="$index" class="p-5 border border-gray-300 shadow-xs rounded-lg flex flex-col gap-3 bg-white md:bg-gray-50/500">
+                  <div [formGroupName]="$index" class="p-5 border border-gray-200 shadow-xs rounded-lg flex flex-col gap-3 bg-white md:bg-gray-50/500">
                     <span class="text-lg tracking-tight font-semibold text-gray-800">{{dayGroup.get('day')?.value}}</span>
                     <div class="flex w-full flex-col items-start gap-4">
                       <div class="w-full grid grid-cols-2 gap-8">
@@ -291,7 +291,7 @@
                 <div class="inline-flex items-center gap-2">
                   @for (day of daysOfWeek; track day) {
                     @for (entry of getDayEntries(day); track entry.index) {
-                      <div class="inline-flex items-center gap-2 shrink-0 px-3 py-1 rounded-full border border-gray-300 bg-white shadow-xs">
+                      <div class="inline-flex items-center gap-2 shrink-0 px-3 py-1 rounded-full border border-gray-200 bg-white shadow-xs">
                         <span class="text-xs font-medium text-gray-700">{{ day }}</span>
                         <span class="text-xs text-gray-800">· {{ entry.value.start_time }} – {{ entry.value.end_time }}</span>
                         @if (entry.value.room) {
@@ -341,7 +341,7 @@
 
                 <div class="w-full flex flex-wrap flex-shrink-0 items-center gap-3">
                   @for (color of colorArray; track $index) {
-                  <div (click)="toggleColor(color)" [ngClass]="{ 'ring-2 ring-offset-2 ring-brand-600': isColorSelected(color), 'hover:scale-110': true }" [style.backgroundColor]="color" class="w-10 h-10 border border-gray-300 shadow-xs rounded-full">
+                  <div (click)="toggleColor(color)" [ngClass]="{ 'ring-2 ring-offset-2 ring-brand-600': isColorSelected(color), 'hover:scale-110': true }" [style.backgroundColor]="color" class="w-10 h-10 border border-gray-200 shadow-xs rounded-full">
 
                   </div>
                 }
@@ -477,7 +477,7 @@
            </div> -->
 
            <!-- Day Navigation -->
-           <div class="day-navigation flex items-center justify-between w-full max-w-sm bg-white border border-gray-300 rounded-lg p-1">
+           <div class="day-navigation flex items-center justify-between w-full max-w-sm bg-white border border-gray-200 rounded-lg p-1">
              <button 
                (click)="previousDay()" 
                [disabled]="currentDayIndex === 0"
@@ -498,7 +498,7 @@
            </div>
 
           <!-- Schedule Grid -->
-         <div class="schedule-grid w-full bg-white border border-gray-300 rounded-lg overflow-scroll h-[20rem] md:h-[30rem]">
+         <div class="schedule-grid w-full bg-white border border-gray-200 rounded-lg overflow-scroll h-[20rem] md:h-[30rem]">
            <!-- Grid container with CSS Grid -->
            <div class="grid grid-cols-[100px_1fr] bg-white">
              
