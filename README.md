@@ -1,145 +1,61 @@
-# 📅 Schedulr — Your Class Timetable → Calendar Exporter
+# 📅 Schedulr: Your Class Timetable → Calendar Exporter
 
-Schedulr is a simple yet powerful web app that helps students and educators turn boring timetable entries into sleek, recurring calendar events — in seconds.
+Schedulr is a simple yet powerful web app that helps primarily students turn boring timetable entries into sleek, recurring calendar events, in seconds!
 
-✨ Built with Angular | ⚡️ Generates .ics files | 🔁 Supports recurring classes
+## 🎯 What Is It Exactly?
 
----
-
-## 🎯 What Is It?
-
-Manually adding weekly classes into your calendar? 😩 Too slow.  
-Schedulr makes it effortless to:
+Building this came from a personal experience. At the start of school, I always wanted my school timetable in my native calendar app, without having to put everything in one-by-one (mainly because I saw it to be stressful and a long process), especially because I was now getting used to the schedule. My school uses MyCamu for our course registration and it has no in-built way to export your timetable to your native calendar app. So I was like `f*** it`, i'll just build something to help me. And this is what brought about Schedulr! 
+This platform makes it effortless to:
 
 ✅ Create your class timetable with an intuitive interface  
 ✅ Set up semester durations and breaks  
 ✅ Preview your weekly schedule visually  
 ✅ Export it as a `.ics` file compatible with Google Calendar, Apple Calendar, and Outlook  
-✅ Save your data locally (no account needed!)
+✅ Access your schedules across different devices (using your Google Account)
 
----
 
-## 🚀 Features
+## 🧑🏾‍🦱 User Flow
 
-### 🧱 Core Features
+- **Login Page** (Starting point)
 
-- 🧾 **Timetable Input Interface**  
-  Add courses with:
-  - Course name  
-  - Day(s) of the week  
-  - Start & end times  
-  - Optional room/location  
-  - Support for recurring classes  
+  This is the first page you see when you visit the platform (if it's your first time). We use Google for authentication because it's easy and fast (compared to the traditional email and password signups) and almost everyone has literally created a Google account before so, that's the reason for that. It also makes it easier for you to access your saved schedules from any device using that same account. And don't worry, for those cencerned about data, the only information about you we use is your name, email and profile photo (if any).
 
-- 📅 **Semester Settings**  
-  - Define semester start and end dates  
-  - Include only selected weekdays  
-  - Exclude public holidays or mid-semester breaks (manual for now)
+  ![Login Page](public/screenshots/login.png)
 
-- 📥 **ICS File Generator**  
-  - One-click export to `.ics`  
-  - Works with Google Calendar, Apple Calendar, and Outlook  
-  - Handles recurring events based on semester schedule
 
-- 👁️ **Timetable Preview**  
-  - Visual grid layout with time blocks  
-  - Helps users confirm schedule before exporting
+- **Dashboard** (Home page)
 
----
+  After successfully logging in, you're brought to this simple, yet lovely dashboard (yes, i designed it myself 😆). You're welcomed with a very warm greeting 😂, and this is where you can access your saved schedules, make edits, as well as create new ones when needed.
 
-### 🧪 MVP+ (If Time Permits)
+  ![Dashboard Page](public/screenshots/dashboard.png)
 
-- 📄 **CSV Import**  
-  - Upload a `.csv` file or paste tabular data  
-  - Map table headers to course fields
 
-- 💾 **Save to Browser**  
-  - LocalStorage saves user sessions  
-  - Reuse/edit your timetable later without logging in
+- **Add/Edit Schedules**
 
----
+  Now we move to talking about the main functionality of the platform. As mentioned earlier, you can create schedules and edit existing ones. Here, I have a personal schedule I created for the just ended semester. When you click on it you have the chance to either edit it, or download it to your device as a `.ics` file, which is the format most (if not all) calendars support. Creating and editing schedules is very easy here. Both processes are done on one single page to avoid building the same thing for slightly different tasks. When you're creating, you start off with a fresh form, and when you're trying to edit, the data for that schedule is populated into the form.
 
-## 🧭 User Flow
+  You start off by inputting a name for the schedule (it can be anything), then the time frame of that schedule. We recommend using the time-frame of your semester, so that when the semester ends, you stop seeing school stuff in your calendar app.
 
-1. 👋 User lands on homepage  
-2. 📆 Inputs semester start/end dates and optional breaks  
-3. 🧠 Adds each class (course name, days, time, room)  
-4. 👁️ Views a live timetable preview  
-5. 📤 Clicks “Download Calendar File” to export `.ics`  
-6. 🗓️ Imports into Apple/Google/Outlook Calendar
+  Step 2 of the process is adding your classes. Each class takes all the days (and their times) you have that class in a week, the name of the class, as well as the rooms/lecture halls you have them in (an optional nice-to-have).
 
----
 
-## 🛠️ Tech Stack
+<html>
+ <p align="center">
+  <img src="public/screenshots/edit-schedule.png" width="48%">
+  &nbsp;&nbsp;&nbsp;
+  <img src="public/screenshots/add-and-view-classes.png" width="48%">
+ </p>
+</html>
 
-| Tool | Purpose |
-|------|---------|
-| ⚙️ Angular | Frontend framework |
-| ⏱️ TypeScript | App logic |
-| 🎨 SCSS | Styling |
-| 📦 Angular CLI | Dev & build tools |
 
----
+- **Preview Schedules before saving**
 
-## 🧪 Development
+  Personally one of my favorite features, Step 3 allows you to preview your schedule in a calendar-like layout with your classes in all the times you've put them, for all the days of the week. And they're color-coded, to improve clarity when viewing them. After previewing, when all is good, then you can save your schedule (or update if editing) and it'll be accesible on any device that you log in to. You can even use this to plan your schedule ahead of time before registering courses, for instance.
 
-To start the development server:
+![Preview Page](public/screenshots/preview-schedule.png)
 
-```bash
-ng serve
 
-## Development server
+## Extras
 
-To start a local development server, run:
+This platform is mobile-friendly, and so you can access it on your phones and tablets as well
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
