@@ -15,6 +15,34 @@ This platform makes it effortless to:
 
 ---
 
+
+## 🧑🏾‍🦱 User Flow
+
+- **Login Page** (Starting point)
+
+  This is the first page you see when you visit the platform (if it's your first time). We use Google for authentication because it's easy and fast (compared to the traditional email and password signups) and almost everyone has literally created a Google account before so, that's the reason for that. It also makes it easier for you to access your saved schedules from any device using that same account. And don't worry, for those cencerned about data, the only information about you we use is your name, email and profile photo (if any).
+
+  ![Login Page](public/screenshots/login.png)
+
+
+- **Dashboard** (Home page)
+
+  After successfully logging in, you're brought to this simple, yet lovely dashboard (yes, i designed it myself 😆). You're welcomed with a very warm greeting 😂, and this is where you can access your saved schedules, make edits, as well as create new ones when needed.
+
+  ![Dashboard Page](public/screenshots/dashboard.png)
+
+
+- **Add/Edit Schedules**
+
+  Now we move to talking about the main functionality of the platform. As mentioned earlier, you can create schedules and edit existing ones. Here, I have a personal schedule I created for the just ended semester. When you click on it you have the chance to either edit it, or download it to your device as a `.ics` file, which is the format most (if not all) calendars support. Creating and editing schedules is very easy here. Both processes are done on one single page to avoid building the same thing for slightly different tasks. When you're creating, you start off with a fresh form, and when you're trying to edit, the data for that schedule is populated into the form.
+
+  You start off by inputting a name for the schedule (it can be anything), then the time frame of that schedule. We recommend using the time-frame of your semester, so that when the semester ends, you stop seeing school stuff in your calendar app.
+
+  Step 2 of the process is adding your classes
+
+
+  ![Login Page](public/screenshots/edit-schedule.png) ![](public/screenshots/add-and-view-classes.png)
+
 ## 🚀 Features
 
 ### 🧱 Core Features
