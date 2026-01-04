@@ -13,8 +13,6 @@ This platform makes it effortless to:
 ✅ Export it as a `.ics` file compatible with Google Calendar, Apple Calendar, and Outlook  
 ✅ Access your schedules across different devices (using your Google Account)
 
----
-
 
 ## 🧑🏾‍🦱 User Flow
 
@@ -55,5 +53,9 @@ This platform makes it effortless to:
   Personally one of my favorite features, Step 3 allows you to preview your schedule in a calendar-like layout with your classes in all the times you've put them, for all the days of the week. And they're color-coded, to improve clarity when viewing them. After previewing, when all is good, then you can save your schedule (or update if editing) and it'll be accesible on any device that you log in to. You can even use this to plan your schedule ahead of time before registering courses, for instance.
 
 ![Preview Page](public/screenshots/preview-schedule.png)
-  
+
+
+## Extras
+
+This platform is mobile-friendly, and so you can access it on your phones and tablets as well
 
