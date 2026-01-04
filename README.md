@@ -1,21 +1,17 @@
-# 📅 Schedulr — Your Class Timetable → Calendar Exporter
+# 📅 Schedulr: Your Class Timetable → Calendar Exporter
 
-Schedulr is a simple yet powerful web app that helps students and educators turn boring timetable entries into sleek, recurring calendar events — in seconds.
+Schedulr is a simple yet powerful web app that helps primarily students turn boring timetable entries into sleek, recurring calendar events, in seconds!
 
-✨ Built with Angular | ⚡️ Generates .ics files | 🔁 Supports recurring classes
+## 🎯 What Is It Exactly?
 
----
-
-## 🎯 What Is It?
-
-Manually adding weekly classes into your calendar? 😩 Too slow.  
-Schedulr makes it effortless to:
+Building this came from a personal experience. At the start of school, I always wanted my school timetable in my native calendar app, without having to put everything in one-by-one (mainly because I saw it to be stressful and a long process), especially because I was now getting used to the schedule. My school uses MyCamu for our course registration and it has no in-built way to export your timetable to your native calendar app. So I was like `f*** it`, i'll just build something to help me. And this is what brought about Schedulr! 
+This platform makes it effortless to:
 
 ✅ Create your class timetable with an intuitive interface  
 ✅ Set up semester durations and breaks  
 ✅ Preview your weekly schedule visually  
 ✅ Export it as a `.ics` file compatible with Google Calendar, Apple Calendar, and Outlook  
-✅ Save your data locally (no account needed!)
+✅ Access your schedules across different devices (using your Google Account)
 
 ---
 
